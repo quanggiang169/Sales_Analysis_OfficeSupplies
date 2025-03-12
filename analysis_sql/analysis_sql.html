@@ -1,0 +1,684 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>analysis_sql</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.highlight-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.block-color-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: undefined; }
+.select-value-color-pink { background-color: rgba(225, 136, 179, 0.27); }
+.select-value-color-purple { background-color: rgba(168, 129, 197, 0.27); }
+.select-value-color-green { background-color: rgba(123, 183, 129, 0.27); }
+.select-value-color-gray { background-color: rgba(84, 72, 49, 0.15); }
+.select-value-color-transparentGray { background-color: undefined; }
+.select-value-color-translucentGray { background-color: undefined; }
+.select-value-color-orange { background-color: rgba(224, 124, 57, 0.27); }
+.select-value-color-brown { background-color: rgba(210, 162, 141, 0.35); }
+.select-value-color-red { background-color: rgba(244, 171, 159, 0.4); }
+.select-value-color-yellow { background-color: rgba(236, 191, 66, 0.39); }
+.select-value-color-blue { background-color: rgba(93, 165, 206, 0.27); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="1afcaabb-4910-80e8-bd49-d59179646eb5" class="page sans"><header><h1 class="page-title">analysis_sql</h1><p class="page-description"></p></header><div class="page-body"><p id="1afcaabb-4910-8084-8833-e9c46bda1460" class="">Dưới đây là các <strong>câu hỏi phân tích SQL</strong> tôi đã sử dụng để <strong>đánh giá tình hình kinh doanh</strong> và <strong>định hướng chiến lược</strong> của công ty dựa trên dữ liệu bán hàng từ <code><strong>Sales_Analysis_OfficeSupplies</strong></code>.</p><hr id="1afcaabb-4910-80d4-8b94-e957430080dd"/><h2 id="1afcaabb-4910-80d2-a492-cc65a7f4e4cc" class=""><strong>📌 I. Đánh giá Hiệu quả Kinh doanh Tổng thể</strong></h2><p id="1b2caabb-4910-8081-b2b1-c06da08feb33" class="">Trong giai đoạn 2019-2021, doanh thu, lợi nhuận gộp và lợi nhuận ròng của công ty có sự biến động rõ rệt theo từng quý. Q3-2019 ghi nhận mức doanh thu cao nhất, sau đó giảm dần và chạm đáy vào Q4-2020. Giai đoạn Q2-2020 chứng kiến sự tăng trưởng doanh thu mạnh, nhưng lợi nhuận không tăng tương ứng, cho thấy chi phí gia tăng ảnh hưởng đến hiệu suất. Q4-2020 là quý khó khăn nhất với doanh thu và lợi nhuận ròng giảm mạnh, có thể do yếu tố thị trường hoặc mùa vụ. Dù Q1-2021 có sự phục hồi nhẹ, nhưng doanh thu vẫn thấp hơn đáng kể so với giai đoạn trước đó. Biên lợi nhuận không ổn định, giảm mạnh vào Q1-2020 và Q4-2020, nhưng có dấu hiệu phục hồi vào Q3-2020 và Q1-2021 nhờ tối ưu hóa chi phí. Tỷ lệ chi phí so với doanh thu có xu hướng giảm trong năm 2019 và nửa đầu 2020, nhưng tăng trở lại vào cuối năm 2020, gây áp lực lên lợi nhuận.</p><h3 id="1afcaabb-4910-80aa-8988-d98f07a47d45" class=""><strong>1. Tổng doanh thu, tổng lợi nhuận gộp và tổng lợi nhuận ròng của công ty trong từng kỳ là bao nhiêu?</strong></h3><table id="1b3caabb-4910-8020-b4cf-e3eb1767608b" class="simple-table"><tbody><tr id="1b3caabb-4910-800f-90b9-ef4ecdb6ec46"><td id="_I=K" class="block-color-gray_background">Quý</td><td id="LXCM" class="block-color-gray_background">Tổng Doanh Thu</td><td id="f&gt;In" class="block-color-gray_background">Tổng Lợi Nhuận Gộp</td><td id="\doS" class="block-color-gray_background">Tổng Lợi Nhuận Ròng</td></tr><tr id="1b3caabb-4910-802f-92a9-f3da379677f7"><td id="_I=K" class="">Q2-2019</td><td id="LXCM" class="">1,678,443,156,736.00</td><td id="f&gt;In" class="">465,477,003,995.073</td><td id="\doS" class="">144,091,422,906.071</td></tr><tr id="1b3caabb-4910-80d8-80e9-f8b0427fb2c1"><td id="_I=K" class="">Q3-2019</td><td id="LXCM" class="">2,496,796,269,407.80</td><td id="f&gt;In" class="">609,286,374,267.39</td><td id="\doS" class="">194,234,637,711.383</td></tr><tr id="1b3caabb-4910-8088-8d92-eccad64bb4b1"><td id="_I=K" class="">Q4-2019</td><td id="LXCM" class="">1,457,279,800,776.00</td><td id="f&gt;In" class="">403,899,502,252.604</td><td id="\doS" class="">125,536,520,207.596</td></tr><tr id="1b3caabb-4910-80f9-9dee-c24f37425cb6"><td id="_I=K" class="">Q1-2020</td><td id="LXCM" class="">2,418,997,532,532.02</td><td id="f&gt;In" class="">574,650,516,048.243</td><td id="\doS" class="">179,107,326,805.244</td></tr><tr id="1b3caabb-4910-80ce-87e1-e2ce53004f10"><td id="_I=K" class="">Q2-2020</td><td id="LXCM" class="">2,186,276,853,358.48</td><td id="f&gt;In" class="">500,796,780,053.021</td><td id="\doS" class="">161,141,061,833.020</td></tr><tr id="1b3caabb-4910-808e-83bb-f08fd53abd60"><td id="_I=K" class="">Q3-2020</td><td id="LXCM" class="">2,315,970,092,032.38</td><td id="f&gt;In" class="">594,014,929,425.698</td><td id="\doS" class="">189,027,417,356.685</td></tr><tr id="1b3caabb-4910-8064-ba64-eda2193d7096"><td id="_I=K" class="">Q4-2020</td><td id="LXCM" class="">1,062,156,391,805.25</td><td id="f&gt;In" class="">243,394,935,219.550</td><td id="\doS" class="">78,935,611,974.5516</td></tr><tr id="1b3caabb-4910-80e9-ab3d-e76845cbc3c0"><td id="_I=K" class="">Q1-2021</td><td id="LXCM" class="">1,702,231,595,846.01</td><td id="f&gt;In" class="">443,523,565,308.471</td><td id="\doS" class="">139,369,142,983.470</td></tr></tbody></table><p id="1b2caabb-4910-8046-bf1a-cbe42b05c259" class=""><strong>Tổng quan chung</strong></p><p id="1b2caabb-4910-80c0-a622-e2b80258ad56" class="">Trong suốt giai đoạn này, tổng doanh thu, tổng lợi nhuận gộp và tổng lợi nhuận ròng của công ty có sự biến động theo từng quý. Mức doanh thu cao nhất được ghi nhận vào <strong>Q3-2019</strong> với <strong>2,496,796,269,407.8</strong>, sau đó giảm dần và chạm đáy vào <strong>Q4-2020</strong> với <strong>1,062,156,391,805.25</strong>. Lợi nhuận gộp và lợi nhuận ròng cũng có xu hướng tương tự, đạt đỉnh vào <strong>Q3-2019</strong> và giảm mạnh vào <strong>Q4-2020</strong>.</p><p id="1b2caabb-4910-807d-a4a9-c07ee0d5c5fb" class=""><strong>Các xu hướng quan trọng</strong></p><ul id="1b2caabb-4910-80ba-a16d-fdfad5911905" class="bulleted-list"><li style="list-style-type:disc"><strong>Chu kỳ tăng trưởng và suy giảm</strong><ul id="1b2caabb-4910-803a-9d69-c9451e6a5a72" class="bulleted-list"><li style="list-style-type:circle">Giai đoạn <strong>Q2-2019 đến Q3-2019</strong> cho thấy sự tăng trưởng mạnh mẽ, khi doanh thu, lợi nhuận gộp và lợi nhuận ròng đều đạt mức cao nhất trong dữ liệu.</li></ul><ul id="1b2caabb-4910-800b-905c-ffc75bad4790" class="bulleted-list"><li style="list-style-type:circle">Tuy nhiên, từ <strong>Q4-2019</strong>, doanh thu và lợi nhuận bắt đầu suy giảm, cho thấy sự chững lại trong hoạt động kinh doanh.</li></ul><ul id="1b2caabb-4910-8022-9887-d70b73337805" class="bulleted-list"><li style="list-style-type:circle"><strong>Q1-2020</strong> ghi nhận sự hồi phục khi doanh thu và lợi nhuận tăng trở lại, nhưng xu hướng này không bền vững khi tiếp tục giảm trong nửa cuối năm 2020, đặc biệt là vào <strong>Q4-2020</strong>.</li></ul></li></ul><ul id="1b2caabb-4910-80e7-9be8-efda178bb39a" class="bulleted-list"><li style="list-style-type:disc"><strong>Suy giảm mạnh trong Q4-2020</strong><ul id="1b2caabb-4910-80d2-bf8b-f5ba46c773dd" class="bulleted-list"><li style="list-style-type:circle">Đây là quý có mức doanh thu, lợi nhuận gộp và lợi nhuận ròng thấp nhất trong toàn bộ giai đoạn.</li></ul><ul id="1b2caabb-4910-80f7-b9d2-f3bc231b8241" class="bulleted-list"><li style="list-style-type:circle">Tổng doanh thu giảm hơn <strong>54%</strong> so với mức đỉnh Q3-2019.</li></ul><ul id="1b2caabb-4910-80d7-9095-d971cd9c9cc5" class="bulleted-list"><li style="list-style-type:circle">Lợi nhuận ròng chỉ đạt <strong>78,935,611,974.55</strong>, giảm hơn <strong>59%</strong> so với mức đỉnh.</li></ul><ul id="1b2caabb-4910-80b7-99a2-ec464447a3fe" class="bulleted-list"><li style="list-style-type:circle">Điều này có thể do yếu tố mùa vụ, biến động thị trường hoặc các ảnh hưởng bên ngoài tác động đến doanh thu.</li></ul></li></ul><ul id="1b2caabb-4910-80b3-b334-cbad80a39935" class="bulleted-list"><li style="list-style-type:disc"><strong>Dấu hiệu phục hồi trong Q1-2021</strong><ul id="1b2caabb-4910-8038-8ef4-d50bed69d7db" class="bulleted-list"><li style="list-style-type:circle">Doanh thu và lợi nhuận gộp tăng trở lại so với Q4-2020, mặc dù chưa đạt đến mức cao trước đó.</li></ul><ul id="1b2caabb-4910-80c2-99d5-c0d72cbde451" class="bulleted-list"><li style="list-style-type:circle">Lợi nhuận ròng đạt <strong>139,369,142,983.47</strong>, tăng gần <strong>76%</strong> so với Q4-2020, cho thấy hoạt động kinh doanh có dấu hiệu phục hồi.</li></ul></li></ul><p id="1b2caabb-4910-8012-b259-c67de2fa643d" class=""><strong>Kết luận</strong></p><p id="1b2caabb-4910-80ab-a6d9-fd3a553edb48" class="">Nhìn chung, công ty có một chu kỳ tăng trưởng mạnh mẽ vào năm 2019, đạt đỉnh vào Q3-2019 trước khi suy giảm dần vào cuối năm. Giai đoạn 2020 chứng kiến sự biến động với sự hồi phục nhẹ vào Q1 nhưng lại suy giảm mạnh vào Q4. Q1-2021 mang đến dấu hiệu tích cực, cho thấy công ty có thể đang dần ổn định trở lại sau một giai đoạn khó khăn.</p><h3 id="1afcaabb-4910-80a6-bfe7-e06cc2af8f90" class=""><strong>2. Biến động doanh thu và lợi nhuận qua các quý theo các năm như thế nào?</strong></h3><table id="1b3caabb-4910-80ad-b4ec-d4c9fa249a9b" class="simple-table"><tbody><tr id="1b3caabb-4910-8083-b00e-e12fe82ad4e6"><td id="oex:" class="block-color-gray_background">Quý</td><td id="Hk^]" class="block-color-gray_background">Doanh Thu</td><td id="pv[\" class="block-color-gray_background" style="width:143.45834350585938px">Lợi Nhuận Ròng</td><td id="MSt`" class="block-color-gray_background">Tỷ Lệ Tăng Doanh Thu (%)</td><td id="QS{i" class="block-color-gray_background">Tỷ Lệ Tăng Lợi Nhuận (%)</td></tr><tr id="1b3caabb-4910-801a-bf1a-c1c8ee31418b"><td id="oex:" class="">Q1-2020</td><td id="Hk^]" class="">2,418,997,532,532.02</td><td id="pv[\" class="" style="width:143.45834350585938px">179,107,326,805.244</td><td id="MSt`" class="">NULL</td><td id="QS{i" class="">NULL</td></tr><tr id="1b3caabb-4910-8060-a5d1-c5000c631317"><td id="oex:" class="">Q1-2021</td><td id="Hk^]" class="">1,702,231,595,846.01</td><td id="pv[\" class="" style="width:143.45834350585938px">139,369,142,983.47</td><td id="MSt`" class="">-29.63</td><td id="QS{i" class="">-22.19</td></tr><tr id="1b3caabb-4910-803d-a5ef-d31e17acc1aa"><td id="oex:" class="">Q2-2019</td><td id="Hk^]" class="">1,678,443,156,736.00</td><td id="pv[\" class="" style="width:143.45834350585938px">144,091,422,906.071</td><td id="MSt`" class="">NULL</td><td id="QS{i" class="">NULL</td></tr><tr id="1b3caabb-4910-805f-861e-f1f9a9b7ffa6"><td id="oex:" class="">Q2-2020</td><td id="Hk^]" class="">2,186,276,853,358.48</td><td id="pv[\" class="" style="width:143.45834350585938px">161,141,061,833.020</td><td id="MSt`" class="">30.26</td><td id="QS{i" class="">11.83</td></tr><tr id="1b3caabb-4910-80dd-83e1-db9f4232f780"><td id="oex:" class="">Q3-2019</td><td id="Hk^]" class="">2,496,796,269,407.80</td><td id="pv[\" class="" style="width:143.45834350585938px">194,234,637,711.383</td><td id="MSt`" class="">NULL</td><td id="QS{i" class="">NULL</td></tr><tr id="1b3caabb-4910-80e9-b839-e83b3261b2ae"><td id="oex:" class="">Q3-2020</td><td id="Hk^]" class="">2,315,970,092,032.38</td><td id="pv[\" class="" style="width:143.45834350585938px">189,027,417,356.685</td><td id="MSt`" class="">-7.24</td><td id="QS{i" class="">-2.68</td></tr><tr id="1b3caabb-4910-80d9-99b3-d272873dfd09"><td id="oex:" class="">Q4-2019</td><td id="Hk^]" class="">1,457,279,800,776.00</td><td id="pv[\" class="" style="width:143.45834350585938px">125,536,520,207.596</td><td id="MSt`" class="">NULL</td><td id="QS{i" class="">NULL</td></tr><tr id="1b3caabb-4910-802f-b763-dbcaf41b6fc7"><td id="oex:" class="">Q4-2020</td><td id="Hk^]" class="">1,062,156,391,805.25</td><td id="pv[\" class="" style="width:143.45834350585938px">78,935,611,974.5516</td><td id="MSt`" class="">-27.11</td><td id="QS{i" class="">-37.12</td></tr></tbody></table><p id="1b2caabb-4910-8040-848a-d67028082774" class=""><strong>Thông tin chung về xu hướng biến động</strong></p><ul id="1b2caabb-4910-80bf-ad97-d7a9de8ec66e" class="bulleted-list"><li style="list-style-type:disc">Doanh thu và lợi nhuận ròng có sự biến động rõ rệt giữa các quý, không có xu hướng tăng trưởng ổn định.</li></ul><ul id="1b2caabb-4910-80c5-a747-cd20987ac4d0" class="bulleted-list"><li style="list-style-type:disc"><strong>Q2-2020 là quý có mức tăng trưởng doanh thu cao nhất</strong>, trong khi <strong>Q4-2020 là quý suy giảm mạnh nhất</strong>.</li></ul><ul id="1b2caabb-4910-8062-b570-feec6e258f95" class="bulleted-list"><li style="list-style-type:disc"><strong>Năm 2021 bắt đầu với sự sụt giảm lớn</strong>, đặt ra thách thức cho doanh nghiệp trong việc phục hồi.</li></ul><p id="1b2caabb-4910-80c5-b766-f47842dc3558" class=""><strong>Phân tích chi tiết từng quý</strong></p><ul id="1b2caabb-4910-8092-9c72-d3b80370dbb9" class="bulleted-list"><li style="list-style-type:disc"><strong>Q2: Doanh thu tăng mạnh trong năm 2020</strong><ul id="1b2caabb-4910-80ac-8b9d-c1d8b393a5b9" class="bulleted-list"><li style="list-style-type:circle">Doanh thu tăng <strong>30.26%</strong> (từ <strong>1,678 tỷ</strong> lên <strong>2,186 tỷ</strong>) so với Q2-2019.</li></ul><ul id="1b2caabb-4910-80e3-ade6-e9985d3022c7" class="bulleted-list"><li style="list-style-type:circle">Lợi nhuận ròng tăng <strong>11.83%</strong>, nhưng tốc độ tăng lợi nhuận thấp hơn tốc độ tăng doanh thu, cho thấy biên lợi nhuận có thể bị ảnh hưởng bởi chi phí gia tăng.</li></ul></li></ul><ul id="1b2caabb-4910-8021-8549-f10fc83fcbf6" class="bulleted-list"><li style="list-style-type:disc"><strong>Q3: Dấu hiệu chững lại</strong><ul id="1b2caabb-4910-80fc-b504-d1a2c3938993" class="bulleted-list"><li style="list-style-type:circle">Doanh thu giảm <strong>7.24%</strong> so với Q3-2019.</li></ul><ul id="1b2caabb-4910-80f9-aac4-efaca5cda97d" class="bulleted-list"><li style="list-style-type:circle">Lợi nhuận ròng cũng giảm nhẹ <strong>2.68%</strong>, cho thấy công ty vẫn duy trì hiệu quả hoạt động dù doanh thu sụt giảm.</li></ul></li></ul><ul id="1b2caabb-4910-8053-b666-fc929e6684b6" class="bulleted-list"><li style="list-style-type:disc"><strong>Q4: Sụt giảm mạnh nhất</strong><ul id="1b2caabb-4910-807f-8d4a-e48689e0af63" class="bulleted-list"><li style="list-style-type:circle">Doanh thu giảm <strong>27.11%</strong> và lợi nhuận ròng giảm <strong>37.12%</strong> so với Q4-2019.</li></ul><ul id="1b2caabb-4910-803e-ada0-c4f5cd25ca51" class="bulleted-list"><li style="list-style-type:circle">Đây là quý có mức sụt giảm lớn nhất, có thể do yếu tố mùa vụ hoặc thị trường gặp khó khăn.</li></ul></li></ul><ul id="1b2caabb-4910-8089-a935-f3078b6ede8a" class="bulleted-list"><li style="list-style-type:disc"><strong>Q1: Tiếp tục giảm sâu trong năm 2021</strong><ul id="1b2caabb-4910-8024-bbbe-ed3319588845" class="bulleted-list"><li style="list-style-type:circle">Doanh thu giảm <strong>29.63%</strong> và lợi nhuận ròng giảm <strong>22.19%</strong> so với Q1-2020.</li></ul><ul id="1b2caabb-4910-8098-a3a8-ed392aaa819c" class="bulleted-list"><li style="list-style-type:circle">Mức sụt giảm vẫn lớn, nhưng lợi nhuận ròng giảm ít hơn doanh thu, cho thấy công ty đã có sự điều chỉnh chi phí để tối ưu lợi nhuận.</li></ul></li></ul><p id="1b2caabb-4910-80b8-b351-d1aa9d52e2aa" class=""><strong>Kết luận và xu hướng chính</strong></p><ul id="1b2caabb-4910-8059-9ff1-dad57d766d4f" class="bulleted-list"><li style="list-style-type:disc"><strong>Q2-2020 là điểm sáng duy nhất</strong> với mức tăng trưởng doanh thu mạnh, nhưng lợi nhuận không tăng tương ứng, có thể do chi phí cao hơn.</li></ul><ul id="1b2caabb-4910-8000-bf39-eec932c4c613" class="bulleted-list"><li style="list-style-type:disc"><strong>Q4-2020 là thời điểm khó khăn nhất</strong>, doanh thu và lợi nhuận đều giảm mạnh.</li></ul><ul id="1b2caabb-4910-8060-8814-c9c304787ebe" class="bulleted-list"><li style="list-style-type:disc"><strong>Q1-2021 tiếp tục xu hướng giảm</strong>, đặt ra thách thức lớn cho doanh nghiệp trong việc phục hồi hoạt động kinh doanh.</li></ul><h3 id="1afcaabb-4910-8069-9465-d8bc1f00ab37" class=""><strong>3. Biên lợi nhuận (Lợi nhuận ròng / Doanh thu) của công ty có ổn định không? Có giai đoạn nào biên lợi nhuận bị giảm mạnh không?</strong></h3><table id="1b3caabb-4910-8090-9520-d5d66e9faa89" class="simple-table"><tbody><tr id="1b3caabb-4910-8006-86be-c6be897c8b58"><td id="o?G&lt;" class="block-color-gray_background" style="width:105px">Quý</td><td id="xVhW" class="block-color-gray_background" style="width:149.65625px">Doanh Thu</td><td id="RpXH" class="block-color-gray_background" style="width:144.96875px">Lợi Nhuận Ròng</td><td id="g:eC" class="block-color-gray_background">Biên Lợi Nhuận (%)</td><td id="YV\?" class="block-color-gray_background">Biến Đổi Biên Lợi Nhuận (%)</td></tr><tr id="1b3caabb-4910-8070-a8b4-df1c5150c409"><td id="o?G&lt;" class="" style="width:105px">Q2-2019</td><td id="xVhW" class="" style="width:149.65625px">1,678,443,156,736.00</td><td id="RpXH" class="" style="width:144.96875px">144,091,422,906.071</td><td id="g:eC" class="">8.58</td><td id="YV\?" class="">NULL</td></tr><tr id="1b3caabb-4910-80df-8771-d1183db15aa1"><td id="o?G&lt;" class="" style="width:105px">Q3-2019</td><td id="xVhW" class="" style="width:149.65625px">2,496,796,269,407.80</td><td id="RpXH" class="" style="width:144.96875px">194,234,637,711.383</td><td id="g:eC" class="">7.78</td><td id="YV\?" class="">-0.81</td></tr><tr id="1b3caabb-4910-8051-adb2-e3fa3c9e4832"><td id="o?G&lt;" class="" style="width:105px">Q4-2019</td><td id="xVhW" class="" style="width:149.65625px">1,457,279,800,776.00</td><td id="RpXH" class="" style="width:144.96875px">125,536,520,207.596</td><td id="g:eC" class="">8.61</td><td id="YV\?" class="">0.84</td></tr><tr id="1b3caabb-4910-80be-9772-c3046e9066bb"><td id="o?G&lt;" class="" style="width:105px">Q1-2020</td><td id="xVhW" class="" style="width:149.65625px">2,418,997,532,532.02</td><td id="RpXH" class="" style="width:144.96875px">179,107,326,805.244</td><td id="g:eC" class="">7.40</td><td id="YV\?" class="">-1.21</td></tr><tr id="1b3caabb-4910-8034-a49c-df0457d9f9b7"><td id="o?G&lt;" class="" style="width:105px">Q2-2020</td><td id="xVhW" class="" style="width:149.65625px">2,186,276,853,358.48</td><td id="RpXH" class="" style="width:144.96875px">161,141,061,833.020</td><td id="g:eC" class="">7.37</td><td id="YV\?" class="">-0.03</td></tr><tr id="1b3caabb-4910-8036-a9c1-f56e9cc9dcd5"><td id="o?G&lt;" class="" style="width:105px">Q3-2020</td><td id="xVhW" class="" style="width:149.65625px">2,315,970,092,032.38</td><td id="RpXH" class="" style="width:144.96875px">189,027,417,356.685</td><td id="g:eC" class="">8.16</td><td id="YV\?" class="">0.79</td></tr><tr id="1b3caabb-4910-8094-bb6f-f7a4c9f946ea"><td id="o?G&lt;" class="" style="width:105px">Q4-2020</td><td id="xVhW" class="" style="width:149.65625px">1,062,156,391,805.25</td><td id="RpXH" class="" style="width:144.96875px">78,935,611,974.5516</td><td id="g:eC" class="">7.43</td><td id="YV\?" class="">-0.73</td></tr><tr id="1b3caabb-4910-8080-924e-fd3cfd56f2ab"><td id="o?G&lt;" class="" style="width:105px">Q1-2021</td><td id="xVhW" class="" style="width:149.65625px">1,702,231,595,846.01</td><td id="RpXH" class="" style="width:144.96875px">139,369,142,983.470</td><td id="g:eC" class="">8.19</td><td id="YV\?" class="">0.76</td></tr></tbody></table><p id="1b2caabb-4910-80df-9bce-cac6f4962771" class=""><strong>Thông tin chung về xu hướng biên lợi nhuận</strong></p><ul id="1b2caabb-4910-806c-bf0e-c56b1a5ea266" class="bulleted-list"><li style="list-style-type:disc">Biên lợi nhuận <strong>không ổn định</strong>, có sự biến động giữa các quý.</li></ul><ul id="1b2caabb-4910-8030-84a9-c4fa93381afb" class="bulleted-list"><li style="list-style-type:disc">Có những giai đoạn biên lợi nhuận <strong>giảm mạnh</strong>, đặc biệt trong <strong>Q1-2020 và Q4-2020</strong>.</li></ul><ul id="1b2caabb-4910-8058-87d9-ea19ee4e278c" class="bulleted-list"><li style="list-style-type:disc"><strong>Q3-2020 và Q1-2021</strong> là những quý có sự phục hồi đáng chú ý về biên lợi nhuận.</li></ul><p id="1b2caabb-4910-80c3-82e0-f0fa867f322d" class=""><strong>Phân tích chi tiết từng giai đoạn</strong></p><ul id="1b2caabb-4910-8087-96d6-d4c2fea0e61a" class="bulleted-list"><li style="list-style-type:disc"><strong>Giai đoạn biên lợi nhuận giảm mạnh</strong><ul id="1b2caabb-4910-80bc-8a95-d65dc5974e0a" class="bulleted-list"><li style="list-style-type:circle"><strong>Q1-2020</strong>: Giảm <strong>1.21 điểm %</strong>, từ <strong>8.61% (Q4-2019) xuống 7.40%</strong>. Đây là mức giảm lớn nhất, có thể do doanh thu tăng nhưng chi phí vận hành cao hơn khiến lợi nhuận ròng không tăng tương ứng.</li></ul><ul id="1b2caabb-4910-80c3-ba1d-e8a5c5a56443" class="bulleted-list"><li style="list-style-type:circle"><strong>Q4-2020</strong>: Giảm <strong>0.73 điểm %</strong>, từ <strong>8.16% (Q3-2020) xuống 7.43%</strong>. Điều này cho thấy trong giai đoạn này, công ty có thể gặp vấn đề về tối ưu hóa chi phí hoặc chịu tác động của yếu tố bên ngoài.</li></ul></li></ul><ul id="1b2caabb-4910-8051-9e30-e47f0de739fc" class="bulleted-list"><li style="list-style-type:disc"><strong>Giai đoạn biên lợi nhuận phục hồi</strong><ul id="1b2caabb-4910-80aa-9edb-daff8d630895" class="bulleted-list"><li style="list-style-type:circle"><strong>Q3-2020</strong>: Tăng <strong>0.79 điểm %</strong>, từ <strong>7.37% (Q2-2020) lên 8.16%</strong>. Đây là một tín hiệu tích cực, cho thấy công ty có thể đã kiểm soát tốt chi phí hoặc cải thiện hiệu suất kinh doanh.</li></ul><ul id="1b2caabb-4910-80a8-a5f1-ddaeb5e3d153" class="bulleted-list"><li style="list-style-type:circle"><strong>Q1-2021</strong>: Tăng <strong>0.76 điểm %</strong>, từ <strong>7.43% (Q4-2020) lên 8.19%</strong>. Dù doanh thu giảm, công ty vẫn duy trì biên lợi nhuận ổn định, có thể nhờ tối ưu hóa chi phí hoặc cải thiện cơ cấu sản phẩm/dịch vụ.</li></ul></li></ul><p id="1b2caabb-4910-80cd-bab7-ef98127949e2" class=""><strong>Kết luận và xu hướng chính</strong></p><ul id="1b2caabb-4910-8077-9fc2-f18f7dccdefa" class="bulleted-list"><li style="list-style-type:disc"><strong>Biên lợi nhuận không ổn định</strong>, dao động từ <strong>7.37% đến 8.61%</strong>.</li></ul><ul id="1b2caabb-4910-8029-93e3-d2670f8d0fa1" class="bulleted-list"><li style="list-style-type:disc"><strong>Q1-2020 và Q4-2020 là hai thời điểm biên lợi nhuận giảm mạnh</strong>, có thể do chi phí tăng hoặc yếu tố thị trường tác động.</li></ul><ul id="1b2caabb-4910-80d1-94b9-faca751c38fd" class="bulleted-list"><li style="list-style-type:disc"><strong>Q3-2020 và Q1-2021 có dấu hiệu phục hồi</strong>, cho thấy công ty có chiến lược kiểm soát chi phí tốt hơn hoặc cải thiện hiệu suất kinh doanh.</li></ul><h3 id="1afcaabb-4910-80a5-9bd4-ef35292569b1" class=""><strong>4. Tỷ lệ chi phí so với doanh thu có xu hướng tăng hay giảm?</strong></h3><table id="1b3caabb-4910-8060-95ad-d8f3ca41f07a" class="simple-table"><tbody><tr id="1b3caabb-4910-8083-b96a-d754fe246da2"><td id="W[&gt;:" class="block-color-gray_background">Quý</td><td id="OkMb" class="block-color-gray_background">Doanh Thu</td><td id="`JrQ" class="block-color-gray_background">Tổng Chi Phí</td><td id="PUPP" class="block-color-gray_background">Tỷ Lệ Chi Phí (%)</td><td id="aY{x" class="block-color-gray_background">Biến Động Chi Phí (%)</td></tr><tr id="1b3caabb-4910-80dc-87aa-fd90f46ef7eb"><td id="W[&gt;:" class="">Q2-2019</td><td id="OkMb" class="">1,678,443,156,736.00</td><td id="`JrQ" class="">321,385,581,089</td><td id="PUPP" class="">19.15</td><td id="aY{x" class="">NULL</td></tr><tr id="1b3caabb-4910-80fc-b105-d1d7fb468c4a"><td id="W[&gt;:" class="">Q3-2019</td><td id="OkMb" class="">2,496,796,269,407.80</td><td id="`JrQ" class="">415,051,736,556</td><td id="PUPP" class="">16.62</td><td id="aY{x" class="">-2.52</td></tr><tr id="1b3caabb-4910-8024-a211-d0151d6e3eb8"><td id="W[&gt;:" class="">Q4-2019</td><td id="OkMb" class="">1,457,279,800,776.00</td><td id="`JrQ" class="">278,362,982,045</td><td id="PUPP" class="">19.10</td><td id="aY{x" class="">2.48</td></tr><tr id="1b3caabb-4910-8014-a4bd-f6c337ac12a7"><td id="W[&gt;:" class="">Q1-2020</td><td id="OkMb" class="">2,418,997,532,532.02</td><td id="`JrQ" class="">395,543,189,243</td><td id="PUPP" class="">16.35</td><td id="aY{x" class="">-2.75</td></tr><tr id="1b3caabb-4910-8059-a7bb-eab349fd4b1c"><td id="W[&gt;:" class="">Q2-2020</td><td id="OkMb" class="">2,186,276,853,358.48</td><td id="`JrQ" class="">339,655,718,220</td><td id="PUPP" class="">15.54</td><td id="aY{x" class="">-0.82</td></tr><tr id="1b3caabb-4910-801a-b858-f52bd3c25251"><td id="W[&gt;:" class="">Q3-2020</td><td id="OkMb" class="">2,315,970,092,032.38</td><td id="`JrQ" class="">404,987,512,069</td><td id="PUPP" class="">17.49</td><td id="aY{x" class="">1.95</td></tr><tr id="1b3caabb-4910-8017-96b4-c6dfc304f378"><td id="W[&gt;:" class="">Q4-2020</td><td id="OkMb" class="">1,062,156,391,805.25</td><td id="`JrQ" class="">164,459,323,245</td><td id="PUPP" class="">15.48</td><td id="aY{x" class="">-2.00</td></tr><tr id="1b3caabb-4910-80cc-8dbc-c4959f0eeb22"><td id="W[&gt;:" class="">Q1-2021</td><td id="OkMb" class="">1,702,231,595,846.01</td><td id="`JrQ" class="">304,154,422,325</td><td id="PUPP" class="">17.87</td><td id="aY{x" class="">2.38</td></tr></tbody></table><p id="1b2caabb-4910-80c3-88d6-d0004e534ff0" class=""><strong>Thông tin chung</strong></p><ul id="1b2caabb-4910-80bf-8c21-d3a6f370d780" class="bulleted-list"><li style="list-style-type:disc"><strong>Tỷ lệ chi phí so với doanh thu không ổn định</strong>, có sự biến động giữa các quý.</li></ul><ul id="1b2caabb-4910-800e-b31f-dc7bb7bd97df" class="bulleted-list"><li style="list-style-type:disc">Xu hướng chung là <strong>giảm trong năm 2019 và nửa đầu 2020</strong>, sau đó <strong>tăng trở lại vào cuối năm 2020 và đầu năm 2021</strong>.</li></ul><ul id="1b2caabb-4910-80f2-954a-e1379a45de94" class="bulleted-list"><li style="list-style-type:disc"><strong>Biến động chi phí có sự thay đổi rõ rệt</strong> theo từng giai đoạn, với một số quý giảm mạnh và một số quý tăng đáng kể.</li></ul><p id="1b2caabb-4910-8001-8d94-f162c2b2c6a9" class=""><strong>Phân tích chi tiết từng giai đoạn</strong></p><ul id="1b2caabb-4910-80f9-8588-e1b69745420d" class="bulleted-list"><li style="list-style-type:disc"><strong>Giai đoạn tỷ lệ chi phí giảm</strong> (Quý Q3-2019 → Q2-2020)<ul id="1b2caabb-4910-80b2-8733-ea4db0b880ff" class="bulleted-list"><li style="list-style-type:circle"><strong>Q3-2019</strong>: Giảm <strong>2.52 điểm %</strong>, từ <strong>19.15% (Q2-2019) xuống 16.62%</strong>. Đây là một dấu hiệu tích cực, cho thấy chi phí đã được kiểm soát tốt hơn so với doanh thu.</li></ul><ul id="1b2caabb-4910-804a-9115-c78eaa0c42d9" class="bulleted-list"><li style="list-style-type:circle"><strong>Q1-2020</strong>: Giảm <strong>2.75 điểm %</strong>, từ <strong>19.10% (Q4-2019) xuống 16.35%</strong>. Đây là mức giảm lớn nhất trong giai đoạn này, có thể do công ty tối ưu hóa chi phí vận hành hoặc tăng trưởng doanh thu mạnh hơn so với chi phí.</li></ul><ul id="1b2caabb-4910-80a5-ac5c-c3ac189cc851" class="bulleted-list"><li style="list-style-type:circle"><strong>Q2-2020</strong>: Giảm <strong>0.82 điểm %</strong>, từ <strong>16.35% (Q1-2020) xuống 15.54%</strong>. Mức giảm này nhẹ hơn nhưng vẫn theo xu hướng giảm chung.</li></ul></li></ul><ul id="1b2caabb-4910-8073-8127-d3ae610aa63e" class="bulleted-list"><li style="list-style-type:disc"><strong>Giai đoạn tỷ lệ chi phí tăng</strong> (Quý Q3-2020 → Q1-2021)<ul id="1b2caabb-4910-8077-90ab-f0635dd5ed68" class="bulleted-list"><li style="list-style-type:circle"><strong>Q3-2020</strong>: Tăng <strong>1.95 điểm %</strong>, từ <strong>15.54% (Q2-2020) lên 17.49%</strong>. Điều này có thể phản ánh chi phí gia tăng do mở rộng hoạt động hoặc điều chỉnh chiến lược kinh doanh.</li></ul><ul id="1b2caabb-4910-80f1-94e8-cc402652607e" class="bulleted-list"><li style="list-style-type:circle"><strong>Q1-2021</strong>: Tăng <strong>2.38 điểm %</strong>, từ <strong>15.48% (Q4-2020) lên 17.87%</strong>. Đây là mức tăng cao nhất, có thể cho thấy chi phí vận hành hoặc sản xuất tăng lên đáng kể.</li></ul></li></ul><p id="1b2caabb-4910-809a-bf27-ed916e811816" class=""><strong>Kết luận và xu hướng chính</strong></p><ul id="1b2caabb-4910-80af-aade-dbe58833fbb0" class="bulleted-list"><li style="list-style-type:disc"><strong>Tỷ lệ chi phí so với doanh thu không ổn định</strong>, có xu hướng giảm trong năm 2019 - đầu 2020, nhưng tăng trở lại vào cuối 2020 - đầu 2021.</li></ul><ul id="1b2caabb-4910-80cb-ae28-d3eeeabea5c9" class="bulleted-list"><li style="list-style-type:disc"><strong>Giai đoạn giảm (Q3-2019 đến Q2-2020)</strong> cho thấy công ty đã kiểm soát tốt chi phí hoặc doanh thu tăng trưởng mạnh hơn.</li></ul><ul id="1b2caabb-4910-803c-a3c1-c9987e4b8a19" class="bulleted-list"><li style="list-style-type:disc"><strong>Giai đoạn tăng (Q3-2020 đến Q1-2021)</strong> có thể phản ánh sự gia tăng chi phí hoạt động, có khả năng liên quan đến mở rộng kinh doanh hoặc điều chỉnh chiến lược.</li></ul><ul id="1b2caabb-4910-8040-b284-ff0b53243254" class="bulleted-list"><li style="list-style-type:disc"><strong>Tỷ lệ chi phí thấp nhất là Q2-2020 (15.54%)</strong>, và <strong>cao nhất là Q2-2019 (19.15%)</strong>.</li></ul><hr id="1afcaabb-4910-8042-9461-f762549af2ab"/><h2 id="1afcaabb-4910-8076-a05e-f4c2dcefe504" class=""><strong>📌 II. Định hướng Phát triển Sản phẩm</strong></h2><p id="1b2caabb-4910-8006-b949-d13ef492bcfa" class="">Dữ liệu cho thấy nhóm <strong>Bút Viết</strong> đang có tiềm năng tăng trưởng mạnh mẽ, đặc biệt là các dòng <strong>bút gel, bút máy và ruột bút</strong>, với sản phẩm <strong>Bút GEL21 đạt mức tăng trưởng cao nhất (128,71%)</strong>. Điều này cho thấy sự ưa chuộng của người tiêu dùng đối với các sản phẩm này, tạo cơ hội để công ty mở rộng danh mục sản phẩm, cải tiến chất lượng, đa dạng hóa mẫu mã và nâng cao giá trị thương hiệu.</p><p id="1b2caabb-4910-80c1-a279-d5d05693b779" class="">Trong khi đó, nhóm <strong>Mỹ thuật</strong> tuy có tỷ lệ tăng trưởng trung bình cao nhất (16,50%) nhưng lại xuất hiện nhiều sản phẩm có xu hướng giảm mạnh doanh số, đặc biệt là các dòng <strong>sáp màu và bút lông màu</strong>. Điều này đặt ra thách thức cho công ty trong việc xem xét lại chiến lược phát triển nhóm sản phẩm này, có thể là <strong>tái định vị thị trường, cải tiến thiết kế, hoặc đẩy mạnh chiến dịch marketing để kích cầu</strong>.</p><p id="1b2caabb-4910-8009-89af-d42b9dab46ab" class="">Ngoài ra, một số sản phẩm có <strong>doanh thu cao nhưng biên lợi nhuận thấp</strong> như <strong>Bút TL027 xanh</strong> cần được xem xét tối ưu hóa chi phí sản xuất hoặc điều chỉnh chiến lược giá để nâng cao lợi nhuận. Ngược lại, các sản phẩm có <strong>biên lợi nhuận cao</strong> như <strong>Băng keo BKD04, bút GEL18, bút WB15</strong> có thể được tập trung phát triển mạnh hơn để gia tăng lợi nhuận tổng thể cho công ty.</p><p id="1b2caabb-4910-80c0-93f4-e518bcaf535e" class="">Tóm lại, công ty nên tập trung <strong>mở rộng nhóm sản phẩm Bút Viết</strong>, đồng thời <strong>xem xét lại chiến lược đối với nhóm Mỹ thuật và tối ưu hóa hiệu quả kinh doanh của các sản phẩm có lợi nhuận thấp nhưng doanh thu cao</strong> để đảm bảo sự phát triển bền vững trong tương lai.</p><h3 id="1afcaabb-4910-80d7-ac53-c3b24ae3ae06" class=""><strong>1. Sản phẩm nào có doanh thu cao nhất nhưng lợi nhuận ròng thấp?</strong></h3><p id="1b2caabb-4910-80a8-b9ce-d8b52b96a3ec" class="">Bảng Sản Phẩm Có Biên Lợi Nhuận Thấp Hơn Trung Bình</p><table id="1b2caabb-4910-80ac-9d39-f109dd6cf7e8" class="simple-table"><tbody><tr id="1b2caabb-4910-80c9-ae4e-fe168c02a9e4"><td id="KDwW" class="block-color-gray_background" style="width:102px">Mã sản phẩm</td><td id="inXB" class="block-color-gray_background">Tên sản phẩm</td><td id="^kjM" class="block-color-gray_background" style="width:143px">Tổng Doanh Thu</td><td id="MACV" class="block-color-gray_background" style="width:138px">Lợi Nhuận Ròng</td><td id="^UgS" class="block-color-gray_background" style="width:86px">Biên Lợi Nhuận (%)</td><td id="Y\q^" class="block-color-gray_background" style="width:111px">Biên Lợi Nhuận Trung Bình (%)</td></tr><tr id="1b2caabb-4910-80c2-b079-f5a83641fd5e"><td id="KDwW" class="" style="width:102px">50000073</td><td id="inXB" class="">Bút TL027 xanh-hộp 20 cây (360 độ)</td><td id="^kjM" class="" style="width:143px">2,993,099,740,300</td><td id="MACV" class="" style="width:138px">212,265,763,792.4</td><td id="^UgS" class="" style="width:86px">7.09</td><td id="Y\q^" class="" style="width:111px">7.91</td></tr><tr id="1b2caabb-4910-80e5-a2c8-f92d63c4b8b0"><td id="KDwW" class="" style="width:102px">50001190</td><td id="inXB" class="">Bút WB03 xanh-hộp 12 cây</td><td id="^kjM" class="" style="width:143px">332,729,894,949.8</td><td id="MACV" class="" style="width:138px">16,942,284,693.76</td><td id="^UgS" class="" style="width:86px">5.09</td><td id="Y\q^" class="" style="width:111px">7.91</td></tr><tr id="1b2caabb-4910-8080-82e8-f6e01f8643da"><td id="KDwW" class="" style="width:102px">50000531</td><td id="inXB" class="">Bút GEL04 tím-hộp 20 cây/T960</td><td id="^kjM" class="" style="width:143px">260,136,038,158.2</td><td id="MACV" class="" style="width:138px">18,720,370,890.99</td><td id="^UgS" class="" style="width:86px">7.20</td><td id="Y\q^" class="" style="width:111px">7.91</td></tr><tr id="1b2caabb-4910-8048-916b-c8f73f1e9095"><td id="KDwW" class="" style="width:102px">60000005</td><td id="inXB" class="">Bút máy FT02 đen hộp 15 cây</td><td id="^kjM" class="" style="width:143px">218,088,304,162</td><td id="MACV" class="" style="width:138px">11,242,833,761.15</td><td id="^UgS" class="" style="width:86px">5.16</td><td id="Y\q^" class="" style="width:111px">7.91</td></tr><tr id="1b2caabb-4910-800e-a00e-c243aeba4464"><td id="KDwW" class="" style="width:102px">50000822</td><td id="inXB" class="">Bút lông kim FL04 tím-hộp 10 cây</td><td id="^kjM" class="" style="width:143px">183,018,399,062.4</td><td id="MACV" class="" style="width:138px">11,269,617,216.91</td><td id="^UgS" class="" style="width:86px">6.16</td><td id="Y\q^" class="" style="width:111px">7.91</td></tr><tr id="1b2caabb-4910-80d5-bd26-fbbea876133e"><td id="KDwW" class="" style="width:102px">50000579</td><td id="inXB" class="">Bút GEL08 tím-hộp 20 cây</td><td id="^kjM" class="" style="width:143px">180,496,218,412.1</td><td id="MACV" class="" style="width:138px">9,077,965,833.42</td><td id="^UgS" class="" style="width:86px">5.03</td><td id="Y\q^" class="" style="width:111px">7.91</td></tr><tr id="1b2caabb-4910-8097-81b3-c7f742eb4ef9"><td id="KDwW" class="" style="width:102px">50000425</td><td id="inXB" class="">Bút TL061 xanh-hộp 20 cây</td><td id="^kjM" class="" style="width:143px">180,407,155,251.25</td><td id="MACV" class="" style="width:138px">12,935,265,341.92</td><td id="^UgS" class="" style="width:86px">7.17</td><td id="Y\q^" class="" style="width:111px">7.91</td></tr><tr id="1b2caabb-4910-8064-ad31-c71b0aeb2e05"><td id="KDwW" class="" style="width:102px">50001064</td><td id="inXB" class="">Bút PM04 đen-hộp 12 cây</td><td id="^kjM" class="" style="width:143px">177,235,734,004.45</td><td id="MACV" class="" style="width:138px">10,929,597,911.53</td><td id="^UgS" class="" style="width:86px">6.17</td><td id="Y\q^" class="" style="width:111px">7.91</td></tr><tr id="1b2caabb-4910-8079-9248-e53e7dd63dcd"><td id="KDwW" class="" style="width:102px">50000238</td><td id="inXB" class="">Bút TL036 xanh-hộp 10 cây</td><td id="^kjM" class="" style="width:143px">172,598,798,233.8</td><td id="MACV" class="" style="width:138px">10,605,075,353.04</td><td id="^UgS" class="" style="width:86px">6.14</td><td id="Y\q^" class="" style="width:111px">7.91</td></tr><tr id="1b2caabb-4910-8007-a4fb-e433bca065a2"><td id="KDwW" class="" style="width:102px">50001635</td><td id="inXB" class="">Keo dán G08-khay 12 lọ</td><td id="^kjM" class="" style="width:143px">169,153,518,700</td><td id="MACV" class="" style="width:138px">10,523,555,828.8</td><td id="^UgS" class="" style="width:86px">6.22</td><td id="Y\q^" class="" style="width:111px">7.91</td></tr></tbody></table><h3 id="1afcaabb-4910-8002-9afd-f6c0639b0c9b" class=""><strong>2. Sản phẩm nào có biên lợi nhuận tốt nhất? </strong></h3><p id="1b2caabb-4910-8077-b01b-d6d495775c4f" class="">Bảng Sản Phẩm Có Biên Lợi Nhuận Cao</p><table id="1b2caabb-4910-80a8-8d50-d26dce059376" class="simple-table"><tbody><tr id="1b2caabb-4910-80d5-8d24-d35b8eb83429"><td id="XgAP" class="block-color-gray_background">Mã sản phẩm</td><td id="SYex" class="block-color-gray_background">Tên sản phẩm</td><td id="ZbPz" class="block-color-gray_background">Tổng Doanh Thu</td><td id="|{tc" class="block-color-gray_background">Lợi Nhuận Ròng</td><td id="OP&lt;c" class="block-color-gray_background">Biên Lợi Nhuận (%)</td></tr><tr id="1b2caabb-4910-80b5-b7a0-ee442b964076"><td id="XgAP" class="">50001271</td><td id="SYex" class="">Băng keo 40yards BKD04 đục</td><td id="ZbPz" class="">2,499,313,463.5</td><td id="|{tc" class="">260,937,187.06</td><td id="OP&lt;c" class="">10.44</td></tr><tr id="1b2caabb-4910-8079-952f-ea8d8b171ad1"><td id="XgAP" class="">50001259</td><td id="SYex" class="">Băng keo 100yards BKD10 đục</td><td id="ZbPz" class="">14,433,022,635.8</td><td id="|{tc" class="">1,503,630,390.66</td><td id="OP&lt;c" class="">10.42</td></tr><tr id="1b2caabb-4910-80fc-9ae6-d3529194fff1"><td id="XgAP" class="">50001164</td><td id="SYex" class="">Mực PMI01 xanh</td><td id="ZbPz" class="">4,626,791,750</td><td id="|{tc" class="">480,577,647</td><td id="OP&lt;c" class="">10.39</td></tr><tr id="1b2caabb-4910-80f9-a360-d839be1523e2"><td id="XgAP" class="">50000735</td><td id="SYex" class="">Bút GEL18 tím-hộp 20 cây</td><td id="ZbPz" class="">25,488,888,361.7</td><td id="|{tc" class="">2,646,138,365.54</td><td id="OP&lt;c" class="">10.38</td></tr><tr id="1b2caabb-4910-802e-9876-f4664f2252bb"><td id="XgAP" class="">50002220</td><td id="SYex" class="">Bút WB15 xanh-hộp 10 cây</td><td id="ZbPz" class="">47,719,674,464.4</td><td id="|{tc" class="">4,951,089,888.49</td><td id="OP&lt;c" class="">10.38</td></tr><tr id="1b2caabb-4910-80a8-aa48-eca6d97c95d3"><td id="XgAP" class="">50000374</td><td id="SYex" class="">Bút TL049 xanh-hộp 20 cây</td><td id="ZbPz" class="">23,168,816,400</td><td id="|{tc" class="">2,402,248,811</td><td id="OP&lt;c" class="">10.37</td></tr><tr id="1b2caabb-4910-8036-8a3f-d74cb472e604"><td id="XgAP" class="">50000826</td><td id="SYex" class="">Bút lông kim FL04/DO đen-hộp 10 cây</td><td id="ZbPz" class="">4,130,228,754</td><td id="|{tc" class="">427,944,239.8</td><td id="OP&lt;c" class="">10.36</td></tr><tr id="1b2caabb-4910-8088-87a6-fbe97b3c886c"><td id="XgAP" class="">60000007</td><td id="SYex" class="">Bút máy FT02 xanh hộp 15 cây</td><td id="ZbPz" class="">61,769,578,825</td><td id="|{tc" class="">6,394,471,680.3</td><td id="OP&lt;c" class="">10.35</td></tr><tr id="1b2caabb-4910-8026-a707-cf69bec7371f"><td id="XgAP" class="">50000310</td><td id="SYex" class="">Bút TL047 đỏ-hộp 12 cây</td><td id="ZbPz" class="">3,832,766,411.8</td><td id="|{tc" class="">396,723,456.14</td><td id="OP&lt;c" class="">10.35</td></tr><tr id="1b2caabb-4910-80e5-9f71-c7d084b96aa2"><td id="XgAP" class="">50000966</td><td id="SYex" class="">Bút HL07 cam-hộp 10 cây</td><td id="ZbPz" class="">1,505,686,167.2</td><td id="|{tc" class="">155,776,268.04</td><td id="OP&lt;c" class="">10.35</td></tr></tbody></table><h3 id="1afcaabb-4910-80c2-86a4-f851738239c1" class=""><strong>3. Nhóm sản phẩm nào đang có xu hướng tăng trưởng mạnh nhất?</strong></h3><p id="1b2caabb-4910-80c3-88ea-fb71f8ccb642" class="">Tỷ Lệ Tăng Trưởng Trung Bình Theo Nhóm Sản Phẩm Cấp 1 (Theo Quý)</p><table id="1b2caabb-4910-80b8-a148-e54f1daa1719" class="simple-table"><tbody><tr id="1b2caabb-4910-8062-915a-e6ba2b61671d"><td id="}Y_P" class="block-color-gray_background">Nhóm Sản Phẩm</td><td id="pXhu" class="block-color-gray_background">Tỷ Lệ Tăng Trưởng TB (%)</td></tr><tr id="1b2caabb-4910-804b-aff4-d4981dd73c15"><td id="}Y_P" class="">NHÓM MỸ THUẬT</td><td id="pXhu" class="">16.50</td></tr><tr id="1b2caabb-4910-806c-abce-ded506c46c2c"><td id="}Y_P" class="">NHÓM DỤNG CỤ VP</td><td id="pXhu" class="">12.18</td></tr><tr id="1b2caabb-4910-8016-82a8-dba1e9e4db69"><td id="}Y_P" class="">NHÓM BÚT VIẾT</td><td id="pXhu" class="">11.25</td></tr><tr id="1b2caabb-4910-80ce-ab08-e4584b8e081d"><td id="}Y_P" class="">NHÓM HỌC CỤ</td><td id="pXhu" class="">5.92</td></tr></tbody></table><p id="1b2caabb-4910-8018-8f70-f05a8ee13a0d" class="">Tỷ Lệ Tăng Trưởng Trung Bình Theo Cấp Nhóm Sản Phẩm Chi Tiết (Theo Quý) (Top 10)</p><table id="1b2caabb-4910-80e2-9a76-efffcd209cc5" class="simple-table"><tbody><tr id="1b2caabb-4910-80e9-8a48-c9b52652f67e"><td id="dY?R" class="block-color-gray_background">Nhóm SP - Cấp 1</td><td id="&gt;Jt?" class="block-color-gray_background">Nhóm SP - Cấp 2</td><td id="chQT" class="block-color-gray_background">Nhóm SP - Cấp 3</td><td id="`;}w" class="block-color-gray_background">Nhóm SP - Cấp 4</td><td id="}t:l" class="block-color-gray_background">Tỷ lệ Tăng trưởng TB (%)</td></tr><tr id="1b2caabb-4910-803f-ba86-ce1e2bb28990"><td id="dY?R" class="">NHÓM BÚT VIẾT</td><td id="&gt;Jt?" class="">BÚT GEL</td><td id="chQT" class="">BÚT GEL</td><td id="`;}w" class="">Bút GEL21</td><td id="}t:l" class="">128.71</td></tr><tr id="1b2caabb-4910-8095-a2fb-fc3084dc5f36"><td id="dY?R" class="">NHÓM HỌC CỤ</td><td id="&gt;Jt?" class="">DỤNG CỤ HỌC TẬP</td><td id="chQT" class="">HỒ DÁN</td><td id="`;}w" class="">Keo khô G11/DO</td><td id="}t:l" class="">68.44</td></tr><tr id="1b2caabb-4910-8000-9d6c-c8db10199e1a"><td id="dY?R" class="">NHÓM BÚT VIẾT</td><td id="&gt;Jt?" class="">BÚT MÁY</td><td id="chQT" class="">BÚT MÁY</td><td id="`;}w" class="">Bút máy FT15</td><td id="}t:l" class="">53.98</td></tr><tr id="1b2caabb-4910-8085-8a40-e4a3ca7a11b6"><td id="dY?R" class="">NHÓM BÚT VIẾT</td><td id="&gt;Jt?" class="">BÚT MÁY</td><td id="chQT" class="">BÚT MÁY</td><td id="`;}w" class="">Bút máy FT09</td><td id="}t:l" class="">42.43</td></tr><tr id="1b2caabb-4910-8074-ac48-f112458df9b6"><td id="dY?R" class="">NHÓM BÚT VIẾT</td><td id="&gt;Jt?" class="">BÚT BI</td><td id="chQT" class="">BÚT BI</td><td id="`;}w" class="">Bút TL049</td><td id="}t:l" class="">41.52</td></tr><tr id="1b2caabb-4910-8046-9e66-f6449cd199be"><td id="dY?R" class="">NHÓM DỤNG CỤ VP</td><td id="&gt;Jt?" class="">DỤNG CỤ VĂN PHÒNG</td><td id="chQT" class="">BÚT LÔNG BẢNG</td><td id="`;}w" class="">Bút WB15</td><td id="}t:l" class="">35.42</td></tr><tr id="1b2caabb-4910-8055-9908-fd38376259a4"><td id="dY?R" class="">NHÓM BÚT VIẾT</td><td id="&gt;Jt?" class="">RUỘT BÚT</td><td id="chQT" class="">RUỘT BÚT BI</td><td id="`;}w" class="">Ruột BPR08</td><td id="}t:l" class="">33.84</td></tr><tr id="1b2caabb-4910-808d-bc0c-ecda3cbb78cd"><td id="dY?R" class="">NHÓM BÚT VIẾT</td><td id="&gt;Jt?" class="">BÚT CAO CẤP</td><td id="chQT" class="">BÚT BI</td><td id="`;}w" class="">Bút TL059</td><td id="}t:l" class="">33.34</td></tr><tr id="1b2caabb-4910-8073-b70f-c0f1863d5455"><td id="dY?R" class="">NHÓM DỤNG CỤ VP</td><td id="&gt;Jt?" class="">DỤNG CỤ VĂN PHÒNG</td><td id="chQT" class="">BÚT LÔNG BẢNG</td><td id="`;}w" class="">Bút WB02</td><td id="}t:l" class="">33.26</td></tr><tr id="1b2caabb-4910-8006-ab2f-c59d94989ec3"><td id="dY?R" class="">NHÓM BÚT VIẾT</td><td id="&gt;Jt?" class="">RUỘT BÚT</td><td id="chQT" class="">RUỘT BÚT BI</td><td id="`;}w" class="">Ruột BPR05</td><td id="}t:l" class="">31.82</td></tr></tbody></table><p id="1b2caabb-4910-80f2-8c11-d1a33f0e8e8c" class=""><strong>Ghi chú: </strong></p><blockquote id="1b4caabb-4910-8013-b0be-cb63fb18f258" class="">Tỷ lệ tăng trưởng (%) = ((Doanh thu hiện tại - Doanh thu quý trước) / Doanh thu quý trước) × 100</blockquote><p id="1b2caabb-4910-80aa-9c95-e4b3a9c36ad4" class=""><strong>Kết luận:</strong></p><p id="1b2caabb-4910-809a-8b82-e89d586eb804" class="">Mặc dù nhóm <strong>Mỹ thuật</strong> có <strong>tỷ lệ tăng trưởng trung bình cao nhất (16,50%)</strong>, nhưng khi đi vào từng sản phẩm cụ thể có tốc độ tăng trưởng cao nhất, <strong>không có sản phẩm nào thuộc nhóm này</strong>.</p><p id="1b2caabb-4910-804e-988e-c180093c5328" class="">Thay vào đó, nhóm <strong>Bút Viết</strong> có nhiều sản phẩm tăng trưởng mạnh nhất, đặc biệt là <strong>Bút GEL21 (128,71%)</strong>, cho thấy xu hướng tăng trưởng mạnh mẽ của dòng bút gel. Các sản phẩm bút máy, bút bi và ruột bút cũng có mức tăng trưởng đáng kể.</p><p id="1b2caabb-4910-80ec-a584-e1c0772402b6" class="">Điều này gợi ý rằng dù nhóm cấp 1 của Mỹ thuật tăng trưởng cao, nhưng sự đóng góp của từng sản phẩm trong nhóm này không đủ nổi bật. Trong khi đó, nhóm <strong>Bút Viết</strong> tuy có tỷ lệ tăng trưởng trung bình thấp hơn (11,25%) nhưng lại có những sản phẩm tăng trưởng vượt trội.</p><h3 id="1afcaabb-4910-8031-a56b-ea7855f55574" class=""><strong>4. Có sản phẩm nào đang suy giảm doanh số qua các kỳ không?</strong></h3><p id="1b2caabb-4910-8071-9116-d4e5b5a24724" class="">Tỷ Lệ Giảm Doanh Thu Trung Bình Theo Sản Phẩm (Theo Quý) (Top 10)</p><table id="1b2caabb-4910-8037-8e0f-f2169ffab682" class="simple-table"><tbody><tr id="1b2caabb-4910-8011-b0f2-c76f94e5a975"><td id="rU:l" class="block-color-gray_background">Mã sản phẩm</td><td id="]gZI" class="block-color-gray_background">Nhóm SP - Cấp 1</td><td id="Y;q?" class="block-color-gray_background">Tên sản phẩm</td><td id="TDEy" class="block-color-gray_background">Số Kỳ Giảm Liên Tục</td><td id="m`AT" class="block-color-gray_background">Tỷ Lệ Giảm TB (%)</td></tr><tr id="1b2caabb-4910-8090-8688-e45f96d46544"><td id="rU:l" class="">50001674</td><td id="]gZI" class="">NHÓM MỸ THUẬT</td><td id="Y;q?" class="">Sáp màu CRC09 24 màu</td><td id="TDEy" class="">2</td><td id="m`AT" class="">-73.71</td></tr><tr id="1b2caabb-4910-8001-9a9a-d05393182289"><td id="rU:l" class="">50001702</td><td id="]gZI" class="">NHÓM MỸ THUẬT</td><td id="Y;q?" class="">Bút lông màu FP01 12 màu</td><td id="TDEy" class="">2</td><td id="m`AT" class="">-73.69</td></tr><tr id="1b2caabb-4910-8059-a7d3-f32278c9882a"><td id="rU:l" class="">50001673</td><td id="]gZI" class="">NHÓM MỸ THUẬT</td><td id="Y;q?" class="">Sáp màu CRC08 16 màu</td><td id="TDEy" class="">2</td><td id="m`AT" class="">-73.62</td></tr><tr id="1b2caabb-4910-805d-a1bb-f8366c5f2f63"><td id="rU:l" class="">50001672</td><td id="]gZI" class="">NHÓM MỸ THUẬT</td><td id="Y;q?" class="">Sáp màu CRC07 10 màu</td><td id="TDEy" class="">2</td><td id="m`AT" class="">-73.58</td></tr><tr id="1b2caabb-4910-8074-8938-cc2436e7c263"><td id="rU:l" class="">50001669</td><td id="]gZI" class="">NHÓM MỸ THUẬT</td><td id="Y;q?" class="">Sáp màu CRC04/DO 10 màu</td><td id="TDEy" class="">2</td><td id="m`AT" class="">-73.43</td></tr><tr id="1b2caabb-4910-803e-89d9-d50dd18e238d"><td id="rU:l" class="">50001653</td><td id="]gZI" class="">NHÓM MỸ THUẬT</td><td id="Y;q?" class="">Sáp dầu OPC01 12 màu</td><td id="TDEy" class="">2</td><td id="m`AT" class="">-72.34</td></tr><tr id="1b2caabb-4910-80ed-a019-dedefad1aad5"><td id="rU:l" class="">50001707</td><td id="]gZI" class="">NHÓM MỸ THUẬT</td><td id="Y;q?" class="">Bút lông màu FP02/DO 12 màu</td><td id="TDEy" class="">2</td><td id="m`AT" class="">-71.60</td></tr><tr id="1b2caabb-4910-800e-a599-ced84978e646"><td id="rU:l" class="">50001670</td><td id="]gZI" class="">NHÓM MỸ THUẬT</td><td id="Y;q?" class="">Sáp màu CRC05/DO 16 màu</td><td id="TDEy" class="">2</td><td id="m`AT" class="">-70.09</td></tr><tr id="1b2caabb-4910-8034-97ca-edb25ab59bfe"><td id="rU:l" class="">50001639</td><td id="]gZI" class="">NHÓM HỌC CỤ</td><td id="Y;q?" class="">Keo khô G11/DO-hộp 30 thỏi</td><td id="TDEy" class="">3</td><td id="m`AT" class="">-64.53</td></tr><tr id="1b2caabb-4910-8075-9dbe-e2aee7298c7e"><td id="rU:l" class="">50000520</td><td id="]gZI" class="">NHÓM BÚT VIẾT</td><td id="Y;q?" class="">Bút TL069 đen</td><td id="TDEy" class="">2</td><td id="m`AT" class="">-61.30</td></tr></tbody></table><p id="1b2caabb-4910-801b-9d50-efe1b7c09ba2" class=""><strong>Ghi chú:</strong></p><p id="1b2caabb-4910-80bd-97bc-ff78991bdb16" class="">Tỷ lệ giảm doanh thu cho từng quý được tính bằng công thức:</p><blockquote id="1b4caabb-4910-8040-ab60-fbd38c5ed85c" class="">Tỷ lệ giảm (%) = ((Doanh thu hiện tại - Doanh thu quý trước) / Doanh thu quý trước) × 100</blockquote><p id="1b2caabb-4910-8006-b099-dd761f343a9d" class="">Tỷ lệ giảm doanh thu trung bình (TyLeGiamTB) được tính bằng trung bình cộng của các giá trị TyLeGiam trong các kỳ giảm liên tiếp</p><h3 id="1afcaabb-4910-808b-bdc5-de5d31097c5d" class=""><strong>5. Sản phẩm nào có chi phí quá cao so với lợi nhuận mang lại?</strong></h3><p id="1b2caabb-4910-8037-a575-dc5792dfb625" class="">Tỷ Lệ Chi Phí Theo Sản Phẩm (Top 10)</p><table id="1b2caabb-4910-8006-a074-e5d229ab9492" class="simple-table"><tbody><tr id="1b2caabb-4910-80f0-86cb-ee424f550477"><td id="FrTb" class="block-color-gray_background" style="width:77px">Mã sản phẩm</td><td id="xLcM" class="block-color-gray_background" style="width:65px">Tên Nhóm SP - Cấp 1</td><td id="eN~F" class="block-color-gray_background" style="width:93px">Tổng doanh thu</td><td id="hTnf" class="block-color-gray_background" style="width:72px">Tổng giá vốn</td><td id="BQXv" class="block-color-gray_background" style="width:76px">Tổng chi phí</td><td id="zUZ]" class="block-color-gray_background" style="width:83px">Lợi nhuận gộp</td><td id="\Ee&lt;" class="block-color-gray_background" style="width:80px">Lợi nhuận ròng</td><td id="ZIB[" class="block-color-gray_background" style="width:70px">Tỷ lệ chi phí (%)</td></tr><tr id="1b2caabb-4910-80e3-ac5d-dc22749e4eba"><td id="FrTb" class="" style="width:77px">50000156</td><td id="xLcM" class="" style="width:65px">NHÓM BÚT VIẾT</td><td id="eN~F" class="" style="width:93px">38,399,626,680</td><td id="hTnf" class="" style="width:72px">29,875,711,279.5</td><td id="BQXv" class="" style="width:76px">6,596,282,302</td><td id="zUZ]" class="" style="width:83px">8,523,915,400.5</td><td id="\Ee&lt;" class="" style="width:80px">1,927,633,098.5</td><td id="ZIB[" class="" style="width:70px">342.20</td></tr><tr id="1b2caabb-4910-8056-a9eb-e81b7362ea26"><td id="FrTb" class="" style="width:77px">50000579</td><td id="xLcM" class="" style="width:65px">NHÓM BÚT VIẾT</td><td id="eN~F" class="" style="width:93px">180,496,218,412.1</td><td id="hTnf" class="" style="width:72px">140,430,891,745.7</td><td id="BQXv" class="" style="width:76px">30,987,360,833</td><td id="zUZ]" class="" style="width:83px">40,065,326,666.4</td><td id="\Ee&lt;" class="" style="width:80px">9,077,965,833.4</td><td id="ZIB[" class="" style="width:70px">341.35</td></tr><tr id="1b2caabb-4910-805d-aa60-e06c5843b331"><td id="FrTb" class="" style="width:77px">50000049</td><td id="xLcM" class="" style="width:65px">NHÓM BÚT VIẾT</td><td id="eN~F" class="" style="width:93px">60,295,503,877.2</td><td id="hTnf" class="" style="width:72px">46,917,152,453.2</td><td id="BQXv" class="" style="width:76px">10,329,943,994</td><td id="zUZ]" class="" style="width:83px">13,378,351,424.0</td><td id="\Ee&lt;" class="" style="width:80px">3,048,407,430.0</td><td id="ZIB[" class="" style="width:70px">338.86</td></tr><tr id="1b2caabb-4910-8062-8012-c487ace442cf"><td id="FrTb" class="" style="width:77px">50000638</td><td id="xLcM" class="" style="width:65px">NHÓM BÚT VIẾT</td><td id="eN~F" class="" style="width:93px">115,146,533,114.6</td><td id="hTnf" class="" style="width:72px">89,609,928,802.7</td><td id="BQXv" class="" style="width:76px">19,704,829,787</td><td id="zUZ]" class="" style="width:83px">25,536,604,311.9</td><td id="\Ee&lt;" class="" style="width:80px">5,831,774,524.9</td><td id="ZIB[" class="" style="width:70px">337.89</td></tr><tr id="1b2caabb-4910-806a-9590-c1b7b2bf7ced"><td id="FrTb" class="" style="width:77px">50001190</td><td id="xLcM" class="" style="width:65px">NHÓM DỤNG CỤ VP</td><td id="eN~F" class="" style="width:93px">332,729,894,949.8</td><td id="hTnf" class="" style="width:72px">258,585,969,533</td><td id="BQXv" class="" style="width:76px">57,201,640,723</td><td id="zUZ]" class="" style="width:83px">74,143,925,416.8</td><td id="\Ee&lt;" class="" style="width:80px">16,942,284,693.8</td><td id="ZIB[" class="" style="width:70px">337.63</td></tr><tr id="1b2caabb-4910-8060-ac99-cf8cead34577"><td id="FrTb" class="" style="width:77px">50000880</td><td id="xLcM" class="" style="width:65px">NHÓM BÚT VIẾT</td><td id="eN~F" class="" style="width:93px">6,776,463,109.4</td><td id="hTnf" class="" style="width:72px">5,274,303,292.5</td><td id="BQXv" class="" style="width:76px">1,157,988,058</td><td id="zUZ]" class="" style="width:83px">1,502,159,816.9</td><td id="\Ee&lt;" class="" style="width:80px">344,171,758.9</td><td id="ZIB[" class="" style="width:70px">336.46</td></tr><tr id="1b2caabb-4910-8090-8649-e0d9a1fbe9cf"><td id="FrTb" class="" style="width:77px">50001707</td><td id="xLcM" class="" style="width:65px">NHÓM MỸ THUẬT</td><td id="eN~F" class="" style="width:93px">10,246,975,000</td><td id="hTnf" class="" style="width:72px">7,976,034,000</td><td id="BQXv" class="" style="width:76px">1,750,546,948</td><td id="zUZ]" class="" style="width:83px">2,270,941,000</td><td id="\Ee&lt;" class="" style="width:80px">520,394,052</td><td id="ZIB[" class="" style="width:70px">336.39</td></tr><tr id="1b2caabb-4910-8069-9177-edf5c8062fd1"><td id="FrTb" class="" style="width:77px">50000886</td><td id="xLcM" class="" style="width:65px">NHÓM BÚT VIẾT</td><td id="eN~F" class="" style="width:93px">1,475,897,304.6</td><td id="hTnf" class="" style="width:72px">1,148,668,139.9</td><td id="BQXv" class="" style="width:76px">252,210,739</td><td id="zUZ]" class="" style="width:83px">327,229,164.7</td><td id="\Ee&lt;" class="" style="width:80px">75,018,425.7</td><td id="ZIB[" class="" style="width:70px">336.20</td></tr><tr id="1b2caabb-4910-80d5-9b05-c49d7dc8673a"><td id="FrTb" class="" style="width:77px">50000096</td><td id="xLcM" class="" style="width:65px">NHÓM BÚT VIẾT</td><td id="eN~F" class="" style="width:93px">27,506,116,386</td><td id="hTnf" class="" style="width:72px">21,405,048,326.6</td><td id="BQXv" class="" style="width:76px">4,700,435,817</td><td id="zUZ]" class="" style="width:83px">6,101,068,059.5</td><td id="\Ee&lt;" class="" style="width:80px">1,400,632,242.5</td><td id="ZIB[" class="" style="width:70px">335.59</td></tr><tr id="1b2caabb-4910-80ad-bbca-d0332de86393"><td id="FrTb" class="" style="width:77px">50001671</td><td id="xLcM" class="" style="width:65px">NHÓM MỸ THUẬT</td><td id="eN~F" class="" style="width:93px">80,206,081,143.7</td><td id="hTnf" class="" style="width:72px">62,432,555,773.9</td><td id="BQXv" class="" style="width:76px">13,684,018,719</td><td id="zUZ]" class="" style="width:83px">17,773,525,369.8</td><td id="\Ee&lt;" class="" style="width:80px">4,089,506,650.8</td><td id="ZIB[" class="" style="width:70px">334.61</td></tr></tbody></table><hr id="1afcaabb-4910-8054-a584-e5a9065432c8"/><h2 id="1afcaabb-4910-806d-9875-da5dfafc7cc2" class=""><strong>📌 III. Chiến lược Kênh Phân Phối</strong></h2><h3 id="1afcaabb-4910-8074-8a83-fc6bb0cf423a" class=""><strong>1. Kênh phân phối nào (General Trade vs. Traditional Trade) đang hoạt động hiệu quả hơn xét theo doanh thu và lợi nhuận?</strong></h3><p id="1b3caabb-4910-80bb-bb65-cfea92b378a6" class="">So Sánh Sự Hiệu Quả Của Hai Kênh Phân Phối</p><table id="1b3caabb-4910-80b8-b4ba-d41a7a8ab352" class="simple-table"><tbody><tr id="1b3caabb-4910-80f4-902e-e5adc3539b5d"><td id="sWNI" class="block-color-gray_background" style="width:117px">Kênh phân phối</td><td id="gOmX" class="block-color-gray_background">Tổng doanh thu</td><td id="h\Gj" class="block-color-gray_background">Lợi nhuận gộp</td><td id="t|yH" class="block-color-gray_background">Lợi nhuận ròng</td><td id="SqN[" class="block-color-gray_background">Biên lợi nhuận gộp (%)</td><td id=";S;_" class="block-color-gray_background">Biên lợi nhuận ròng (%)</td></tr><tr id="1b3caabb-4910-8079-9437-e775bd1d5205"><td id="sWNI" class="" style="width:117px">General Trade</td><td id="gOmX" class="">10,698,902,817,686.4</td><td id="h\Gj" class="">2,688,924,133,326.72</td><td id="t|yH" class="">796,886,502,807.684</td><td id="SqN[" class="">25.13</td><td id=";S;_" class="">7.45</td></tr><tr id="1b3caabb-4910-805f-809b-f085af79a760"><td id="sWNI" class="" style="width:117px">Modern Trade</td><td id="gOmX" class="">4,619,248,874,807.41</td><td id="h\Gj" class="">1,146,119,473,243.33</td><td id="t|yH" class="">414,556,638,970.346</td><td id="SqN[" class="">24.81</td><td id=";S;_" class="">8.97</td></tr></tbody></table><ul id="1b3caabb-4910-80c5-9627-dd4434ca4237" class="bulleted-list"><li style="list-style-type:disc">Xét theo doanh thu và lợi nhuận gộp, General Trade hoạt động hiệu quả hơn do có quy mô lớn hơn và tạo ra nhiều doanh thu hơn.</li></ul><ul id="1b3caabb-4910-8029-b47a-e6c641445051" class="bulleted-list"><li style="list-style-type:disc">Xét theo hiệu suất lợi nhuận ròng (biên lợi nhuận), Modern Trade có tỷ suất sinh lời tốt hơn, nghĩa là mỗi đồng doanh thu tạo ra nhiều lợi nhuận ròng hơn so với General Trade.</li></ul><ul id="1b3caabb-4910-8060-a6e0-f694c4ed3a9a" class="bulleted-list"><li style="list-style-type:disc">Tùy vào mục tiêu chiến lược, nếu doanh nghiệp muốn tối đa hóa tổng doanh thu và lợi nhuận tuyệt đối, General Trade là lựa chọn tốt hơn. Nếu muốn tối ưu hóa lợi nhuận trên doanh thu, Modern Trade có hiệu quả cao hơn.</li></ul><h3 id="1afcaabb-4910-808d-9b31-eaf8e88f8a9c" class=""><strong>2. Chi phí trung bình trên mỗi sản phẩm giữa các kênh có chênh lệch đáng kể không?</strong></h3><p id="1b3caabb-4910-801d-af70-ed3dd69dd776" class="">So Sánh Chi Phí TB Trên Mỗi Sản Phẩm Tại Hai Kênh Phân Phối</p><table id="1b3caabb-4910-80ea-9550-d02acc0c3d89" class="simple-table"><tbody><tr id="1b3caabb-4910-8006-9285-d3c0581e6b0a"><td id="RWvd" class="block-color-gray_background">Kênh phân phối</td><td id="SOoE" class="block-color-gray_background" style="width:262px">Chi phí trung bình trên mỗi sản phẩm</td></tr><tr id="1b3caabb-4910-8023-a125-efb59b5ab6c1"><td id="RWvd" class="">General Trade</td><td id="SOoE" class="" style="width:262px">510.245268393134</td></tr><tr id="1b3caabb-4910-8070-926e-c6f188c70c34"><td id="RWvd" class="">Modern Trade</td><td id="SOoE" class="" style="width:262px">405.649868476957</td></tr></tbody></table><p id="1b3caabb-4910-80cf-abbd-d20de85a2fe4" class="">Chi phí trung bình trên mỗi sản phẩm của General Trade cao hơn Modern Trade. Điều này có ý nghĩa đáng kể vì mặc dù General Trade tạo ra doanh thu và lợi nhuận gộp cao hơn, nhưng chi phí cao hơn có thể làm giảm hiệu quả lợi nhuận ròng. Trong khi đó, Modern Trade có chi phí thấp hơn nhưng vẫn đạt lợi nhuận ròng đáng kể so với doanh thu, cho thấy hiệu quả kiểm soát chi phí tốt hơn.</p><p id="1b3caabb-4910-8034-9e83-c16406f60e6c" class="">Sự chênh lệch này có thể ảnh hưởng đến chiến lược phân phối, đặc biệt nếu mục tiêu là tối ưu lợi nhuận ròng thay vì chỉ tập trung vào doanh thu.</p><h3 id="1afcaabb-4910-8059-87ff-f7b3cee5807c" class=""><strong>3. Kênh nào có xu hướng tăng trưởng mạnh nhất trong thời gian qua?</strong></h3><p id="1b3caabb-4910-8024-a22b-fc4d433e5c06" class="">So Sánh Tỷ Lệ Tăng Trưởng Doanh Thu Và Lợi Nhuận Của Hai Kênh Phân Phối</p><table id="1b3caabb-4910-8082-ac2a-fba4992c15b1" class="simple-table"><tbody><tr id="1b3caabb-4910-80eb-b477-ecfab793d914"><td id="kDAS" class="block-color-gray_background">Kênh phân phối</td><td id="ZPBa" class="block-color-gray_background">Tỷ lệ tăng trưởng doanh thu trung bình (%)</td><td id="Xa\o" class="block-color-gray_background">Tỷ lệ tăng trưởng lợi nhuận trung bình (%)</td></tr><tr id="1b3caabb-4910-807c-b2d3-d12fe2c9d841"><td id="kDAS" class="">Modern Trade</td><td id="ZPBa" class="">72.80</td><td id="Xa\o" class="">51.87</td></tr><tr id="1b3caabb-4910-8073-afe7-d86a81cc2c20"><td id="kDAS" class="">General Trade</td><td id="ZPBa" class="">9.98</td><td id="Xa\o" class="">16.03</td></tr></tbody></table><p id="1b3caabb-4910-8052-a36a-d2f84ad78a69" class="">Modern Trade có tốc độ tăng trưởng doanh thu và lợi nhuận trung bình cao hơn đáng kể so với General Trade. Cụ thể, tỷ lệ tăng trưởng doanh thu của Modern Trade cao gấp khoảng 7,3 lần so với General Trade, và tỷ lệ tăng trưởng lợi nhuận cũng vượt trội. Điều này cho thấy Modern Trade đang mở rộng nhanh chóng và có tiềm năng tăng trưởng mạnh hơn trong thời gian qua.</p><p id="1b3caabb-4910-805b-a33a-d544625c91c6" class="">Nếu xu hướng này tiếp tục, Modern Trade có thể dần thu hẹp khoảng cách về doanh thu và lợi nhuận với General Trade, đặc biệt nếu chi phí trung bình thấp hơn tiếp tục giúp tối ưu hóa lợi nhuận ròng.</p><p id="1b3caabb-4910-80b5-a588-ef147500fd7c" class=""><strong>Ghi chú:</strong></p><p id="1b3caabb-4910-80db-b148-d903736914e4" class="">Công thức tính <strong>Tỷ lệ tăng trưởng</strong> trong đoạn code SQL trên được xác định như sau:</p><ol type="1" id="1b3caabb-4910-8019-83bd-e1c7d323f5cd" class="numbered-list" start="1"><li><strong>Tỷ lệ tăng trưởng doanh thu (%)</strong><ul id="1b3caabb-4910-8001-9440-f41dd8254c7b" class="bulleted-list"><li style="list-style-type:disc">Nếu doanh thu của quý trước không bằng 0, công thức tính là:<blockquote id="1b3caabb-4910-80cc-b62a-d5d58188beee" class="">Tỷ lệ tăng trưởng doanh thu (%) = ((Doanh thu hiện tại - Doanh thu quý trước) / Doanh thu quý trước) × 100</blockquote></li></ul><ul id="1b3caabb-4910-80c0-933a-d295cad76280" class="bulleted-list"><li style="list-style-type:disc">Nếu doanh thu quý trước bằng 0 hoặc không có dữ liệu, giá trị sẽ là <strong>NULL</strong> (không tính được).</li></ul></li></ol><ol type="1" id="1b3caabb-4910-8055-a172-dd5a4756e4d1" class="numbered-list" start="2"><li><strong>Tỷ lệ tăng trưởng lợi nhuận (%)</strong><ul id="1b3caabb-4910-80fd-81ea-cf24d834fca6" class="bulleted-list"><li style="list-style-type:disc">Nếu lợi nhuận của quý trước không bằng 0, công thức tính là:<blockquote id="1b3caabb-4910-805e-b5b0-f77c16385ab5" class="">Tỷ lệ tăng trưởng lợi nhuận (%) = ((Lợi nhuận hiện tại - Lợi nhuận quý trước) / Lợi nhuận quý trước) × 100</blockquote></li></ul><ul id="1b3caabb-4910-8002-b29f-e47cedc7b650" class="bulleted-list"><li style="list-style-type:disc">Nếu lợi nhuận quý trước bằng 0 hoặc không có dữ liệu, giá trị sẽ là <strong>NULL</strong> (không tính được).</li></ul></li></ol><hr id="1afcaabb-4910-80eb-9227-c705f3978715"/><h2 id="1afcaabb-4910-805c-a5a0-d09023ab050b" class=""><strong>📌 IV. Phân tích Khu vực Bán hàng &amp; Mở rộng Thị trường</strong></h2><h3 id="1afcaabb-4910-802a-b33f-cea75b2714a0" class=""><strong>1. Khu vực nào mang lại doanh thu, lợi nhuận và biên lợi nhuận cao nhất?</strong></h3><table id="1b3caabb-4910-8028-8787-fefd7901895c" class="simple-table"><thead class="simple-table-header"><tr id="1b3caabb-4910-8075-8526-fb34dddf962d"><th id="&gt;Zk}" class="block-color-gray_background simple-table-header" style="width:70px">Kênh Phân Phối</th><th id="eEPY" class="block-color-gray_background simple-table-header" style="width:70px">Vùng Bán Hàng</th><th id="oIn{" class="block-color-gray_background simple-table-header" style="width:145px">Tổng Doanh Thu</th><th id="yYvG" class="block-color-gray_background simple-table-header" style="width:136px">Lợi Nhuận Ròng</th><th id="Q[^d" class="block-color-gray_background simple-table-header" style="width:60px">Biên Lợi Nhuận (%)</th><th id="k{l^" class="block-color-gray_background simple-table-header" style="width:61px">Xếp Hạng Doanh Thu</th><th id="A\P&gt;" class="block-color-gray_background simple-table-header" style="width:63px">Xếp Hạng Lợi Nhuận</th><th id="C:BB" class="block-color-gray_background simple-table-header" style="width:60px">Xếp Hạng Biên Lợi Nhuận</th></tr></thead><tbody><tr id="1b3caabb-4910-802f-aa5a-d36e0f968fda"><td id="&gt;Zk}" class="" style="width:70px">General Trade</td><td id="eEPY" class="" style="width:70px">MN1-Khu vực TP.HCM</td><td id="oIn{" class="" style="width:145px">1,929,185,338,314.15</td><td id="yYvG" class="" style="width:136px">284,426,495,003.46</td><td id="Q[^d" class="" style="width:60px">14.74</td><td id="k{l^" class="" style="width:61px">1</td><td id="A\P&gt;" class="" style="width:63px">1</td><td id="C:BB" class="" style="width:60px">1</td></tr><tr id="1b3caabb-4910-801f-8ce5-d5770e23ad84"><td id="&gt;Zk}" class="" style="width:70px">Modern Trade</td><td id="eEPY" class="" style="width:70px">MN1-Khu vực TP.HCM</td><td id="oIn{" class="" style="width:145px">801,439,445,211.30</td><td id="yYvG" class="" style="width:136px">114,696,570,793.00</td><td id="Q[^d" class="" style="width:60px">14.31</td><td id="k{l^" class="" style="width:61px">4</td><td id="A\P&gt;" class="" style="width:63px">4</td><td id="C:BB" class="" style="width:60px">2</td></tr><tr id="1b3caabb-4910-80cc-92c6-e3c4e0edc18b"><td id="&gt;Zk}" class="" style="width:70px">General Trade</td><td id="eEPY" class="" style="width:70px">MB1-Hà Nội</td><td id="oIn{" class="" style="width:145px">1,208,178,808,497.85</td><td id="yYvG" class="" style="width:136px">166,468,264,250.47</td><td id="Q[^d" class="" style="width:60px">13.78</td><td id="k{l^" class="" style="width:61px">2</td><td id="A\P&gt;" class="" style="width:63px">2</td><td id="C:BB" class="" style="width:60px">3</td></tr><tr id="1b3caabb-4910-8040-b2d7-f4a0af76accd"><td id="&gt;Zk}" class="" style="width:70px">Modern Trade</td><td id="eEPY" class="" style="width:70px">MB1-Hà Nội</td><td id="oIn{" class="" style="width:145px">502,525,360,626.10</td><td id="yYvG" class="" style="width:136px">68,415,335,443.18</td><td id="Q[^d" class="" style="width:60px">13.61</td><td id="k{l^" class="" style="width:61px">11</td><td id="A\P&gt;" class="" style="width:63px">5</td><td id="C:BB" class="" style="width:60px">4</td></tr><tr id="1b3caabb-4910-80e3-96f2-e33d06be84a4"><td id="&gt;Zk}" class="" style="width:70px">Modern Trade</td><td id="eEPY" class="" style="width:70px">Kênh MT1</td><td id="oIn{" class="" style="width:145px">948,316,546,656.49</td><td id="yYvG" class="" style="width:136px">128,258,364,365.09</td><td id="Q[^d" class="" style="width:60px">13.52</td><td id="k{l^" class="" style="width:61px">3</td><td id="A\P&gt;" class="" style="width:63px">3</td><td id="C:BB" class="" style="width:60px">5</td></tr><tr id="1b3caabb-4910-8029-9031-e903b5b4e591"><td id="&gt;Zk}" class="" style="width:70px">Modern Trade</td><td id="eEPY" class="" style="width:70px">MN1-Khu vực 1</td><td id="oIn{" class="" style="width:145px">207,241,469,369.55</td><td id="yYvG" class="" style="width:136px">19,777,957,623.59</td><td id="Q[^d" class="" style="width:60px">9.54</td><td id="k{l^" class="" style="width:61px">22</td><td id="A\P&gt;" class="" style="width:63px">12</td><td id="C:BB" class="" style="width:60px">6</td></tr><tr id="1b3caabb-4910-8075-8e9c-e7e54b949f65"><td id="&gt;Zk}" class="" style="width:70px">General Trade</td><td id="eEPY" class="" style="width:70px">MN1-Khu vực 1</td><td id="oIn{" class="" style="width:145px">647,062,891,486.90</td><td id="yYvG" class="" style="width:136px">60,277,752,187.71</td><td id="Q[^d" class="" style="width:60px">9.32</td><td id="k{l^" class="" style="width:61px">6</td><td id="A\P&gt;" class="" style="width:63px">6</td><td id="C:BB" class="" style="width:60px">7</td></tr><tr id="1b3caabb-4910-801a-bda4-fef1187d47e9"><td id="&gt;Zk}" class="" style="width:70px">Modern Trade</td><td id="eEPY" class="" style="width:70px">MB2-Khu vực 2</td><td id="oIn{" class="" style="width:145px">164,211,054,796.60</td><td id="yYvG" class="" style="width:136px">14,771,028,254.14</td><td id="Q[^d" class="" style="width:60px">9.00</td><td id="k{l^" class="" style="width:61px">25</td><td id="A\P&gt;" class="" style="width:63px">17</td><td id="C:BB" class="" style="width:60px">8</td></tr><tr id="1b3caabb-4910-80fd-8f85-e81e10b953ed"><td id="&gt;Zk}" class="" style="width:70px">General Trade</td><td id="eEPY" class="" style="width:70px">MB2-Khu vực 2</td><td id="oIn{" class="" style="width:145px">689,578,777,871.55</td><td id="yYvG" class="" style="width:136px">59,988,252,211.68</td><td id="Q[^d" class="" style="width:60px">8.70</td><td id="k{l^" class="" style="width:61px">5</td><td id="A\P&gt;" class="" style="width:63px">7</td><td id="C:BB" class="" style="width:60px">9</td></tr><tr id="1b3caabb-4910-80f9-bf31-d5739da1eaab"><td id="&gt;Zk}" class="" style="width:70px">Modern Trade</td><td id="eEPY" class="" style="width:70px">MN1-Khu vực 2</td><td id="oIn{" class="" style="width:145px">145,205,772,740.75</td><td id="yYvG" class="" style="width:136px">12,251,938,216.07</td><td id="Q[^d" class="" style="width:60px">8.44</td><td id="k{l^" class="" style="width:61px">31</td><td id="A\P&gt;" class="" style="width:63px">20</td><td id="C:BB" class="" style="width:60px">10</td></tr><tr id="1b3caabb-4910-8091-81b4-e4c257db5c3f"><td id="&gt;Zk}" class="" style="width:70px">General Trade</td><td id="eEPY" class="" style="width:70px">MN1-Khu vực 2</td><td id="oIn{" class="" style="width:145px">389,036,154,531.05</td><td id="yYvG" class="" style="width:136px">32,638,627,324.97</td><td id="Q[^d" class="" style="width:60px">8.39</td><td id="k{l^" class="" style="width:61px">19</td><td id="A\P&gt;" class="" style="width:63px">9</td><td id="C:BB" class="" style="width:60px">11</td></tr><tr id="1b3caabb-4910-80c7-bc69-fe278b27f5b7"><td id="&gt;Zk}" class="" style="width:70px">Modern Trade</td><td id="eEPY" class="" style="width:70px">MT-Khu vực 4</td><td id="oIn{" class="" style="width:145px">147,825,123,943.70</td><td id="yYvG" class="" style="width:136px">9,136,759,976.96</td><td id="Q[^d" class="" style="width:60px">6.18</td><td id="k{l^" class="" style="width:61px">30</td><td id="A\P&gt;" class="" style="width:63px">21</td><td id="C:BB" class="" style="width:60px">12</td></tr><tr id="1b3caabb-4910-807a-89b7-ed490b0ca116"><td id="&gt;Zk}" class="" style="width:70px">General Trade</td><td id="eEPY" class="" style="width:70px">MN2-Khu vực 4</td><td id="oIn{" class="" style="width:145px">611,380,461,803.65</td><td id="yYvG" class="" style="width:136px">36,158,103,636.40</td><td id="Q[^d" class="" style="width:60px">5.91</td><td id="k{l^" class="" style="width:61px">7</td><td id="A\P&gt;" class="" style="width:63px">8</td><td id="C:BB" class="" style="width:60px">13</td></tr><tr id="1b3caabb-4910-80df-9cf8-dc953aff6f2e"><td id="&gt;Zk}" class="" style="width:70px">Modern Trade</td><td id="eEPY" class="" style="width:70px">MN2-Khu vực 4</td><td id="oIn{" class="" style="width:145px">80,464,494,281.15</td><td id="yYvG" class="" style="width:136px">4,677,148,279.17</td><td id="Q[^d" class="" style="width:60px">5.81</td><td id="k{l^" class="" style="width:61px">35</td><td id="A\P&gt;" class="" style="width:63px">28</td><td id="C:BB" class="" style="width:60px">14</td></tr><tr id="1b3caabb-4910-8049-96e3-e004cd0a27d4"><td id="&gt;Zk}" class="" style="width:70px">General Trade</td><td id="eEPY" class="" style="width:70px">MT-Khu vực 4</td><td id="oIn{" class="" style="width:145px">553,081,588,546.55</td><td id="yYvG" class="" style="width:136px">29,515,855,121.52</td><td id="Q[^d" class="" style="width:60px">5.34</td><td id="k{l^" class="" style="width:61px">9</td><td id="A\P&gt;" class="" style="width:63px">10</td><td id="C:BB" class="" style="width:60px">15</td></tr><tr id="1b3caabb-4910-80fd-9009-f7e79228fe0f"><td id="&gt;Zk}" class="" style="width:70px">Modern Trade</td><td id="eEPY" class="" style="width:70px">MB2-Khu vực 1</td><td id="oIn{" class="" style="width:145px">128,964,132,871.35</td><td id="yYvG" class="" style="width:136px">6,850,307,631.89</td><td id="Q[^d" class="" style="width:60px">5.31</td><td id="k{l^" class="" style="width:61px">33</td><td id="A\P&gt;" class="" style="width:63px">23</td><td id="C:BB" class="" style="width:60px">16</td></tr><tr id="1b3caabb-4910-80c0-9c29-ec80501b042c"><td id="&gt;Zk}" class="" style="width:70px">General Trade</td><td id="eEPY" class="" style="width:70px">MB2-Khu vực 1</td><td id="oIn{" class="" style="width:145px">493,169,609,612.40</td><td id="yYvG" class="" style="width:136px">24,696,224,228.00</td><td id="Q[^d" class="" style="width:60px">5.01</td><td id="k{l^" class="" style="width:61px">13</td><td id="A\P&gt;" class="" style="width:63px">11</td><td id="C:BB" class="" style="width:60px">17</td></tr><tr id="1b3caabb-4910-80cc-841f-ef2ca2eb8b43"><td id="&gt;Zk}" class="" style="width:70px">General Trade</td><td id="eEPY" class="" style="width:70px">MT-Khu vực 1</td><td id="oIn{" class="" style="width:145px">378,832,525,248.10</td><td id="yYvG" class="" style="width:136px">14,981,167,016.21</td><td id="Q[^d" class="" style="width:60px">3.95</td><td id="k{l^" class="" style="width:61px">20</td><td id="A\P&gt;" class="" style="width:63px">15</td><td id="C:BB" class="" style="width:60px">18</td></tr><tr id="1b3caabb-4910-80d1-848c-fd305d6c82c3"><td id="&gt;Zk}" class="" style="width:70px">Modern Trade</td><td id="eEPY" class="" style="width:70px">MN2-Khu vực 1</td><td id="oIn{" class="" style="width:145px">111,584,143,731.20</td><td id="yYvG" class="" style="width:136px">4,108,062,166.33</td><td id="Q[^d" class="" style="width:60px">3.68</td><td id="k{l^" class="" style="width:61px">34</td><td id="A\P&gt;" class="" style="width:63px">29</td><td id="C:BB" class="" style="width:60px">19</td></tr><tr id="1b3caabb-4910-8016-a321-c6078cc58e8f"><td id="&gt;Zk}" class="" style="width:70px">Modern Trade</td><td id="eEPY" class="" style="width:70px">MT-Khu vực 2</td><td id="oIn{" class="" style="width:145px">210,626,676,911.35</td><td id="yYvG" class="" style="width:136px">7,512,947,236.66</td><td id="Q[^d" class="" style="width:60px">3.57</td><td id="k{l^" class="" style="width:61px">21</td><td id="A\P&gt;" class="" style="width:63px">22</td><td id="C:BB" class="" style="width:60px">20</td></tr><tr id="1b3caabb-4910-800e-9654-d2cf5610f6aa"><td id="&gt;Zk}" class="" style="width:70px">Modern Trade</td><td id="eEPY" class="" style="width:70px">MB1-Khu vực 1</td><td id="oIn{" class="" style="width:145px">139,280,459,634.05</td><td id="yYvG" class="" style="width:136px">4,910,475,195.15</td><td id="Q[^d" class="" style="width:60px">3.53</td><td id="k{l^" class="" style="width:61px">32</td><td id="A\P&gt;" class="" style="width:63px">26</td><td id="C:BB" class="" style="width:60px">21</td></tr><tr id="1b3caabb-4910-80e3-bd62-d7728db0d771"><td id="&gt;Zk}" class="" style="width:70px">General Trade</td><td id="eEPY" class="" style="width:70px">MB1-Khu vực 1</td><td id="oIn{" class="" style="width:145px">463,935,813,775.70</td><td id="yYvG" class="" style="width:136px">16,076,031,493.10</td><td id="Q[^d" class="" style="width:60px">3.47</td><td id="k{l^" class="" style="width:61px">15</td><td id="A\P&gt;" class="" style="width:63px">13</td><td id="C:BB" class="" style="width:60px">22</td></tr><tr id="1b3caabb-4910-8086-9960-fa09a4543e58"><td id="&gt;Zk}" class="" style="width:70px">General Trade</td><td id="eEPY" class="" style="width:70px">MN2-Khu vực 2</td><td id="oIn{" class="" style="width:145px">450,134,160,963.90</td><td id="yYvG" class="" style="width:136px">14,797,710,328.44</td><td id="Q[^d" class="" style="width:60px">3.29</td><td id="k{l^" class="" style="width:61px">16</td><td id="A\P&gt;" class="" style="width:63px">16</td><td id="C:BB" class="" style="width:60px">23</td></tr><tr id="1b3caabb-4910-80b1-baa4-d3f37cfb706b"><td id="&gt;Zk}" class="" style="width:70px">Modern Trade</td><td id="eEPY" class="" style="width:70px">MN2-Khu vực 2</td><td id="oIn{" class="" style="width:145px">152,511,192,281.70</td><td id="yYvG" class="" style="width:136px">4,983,694,768.39</td><td id="Q[^d" class="" style="width:60px">3.27</td><td id="k{l^" class="" style="width:61px">27</td><td id="A\P&gt;" class="" style="width:63px">25</td><td id="C:BB" class="" style="width:60px">24</td></tr><tr id="1b3caabb-4910-800a-90db-d01a08c0859e"><td id="&gt;Zk}" class="" style="width:70px">General Trade</td><td id="eEPY" class="" style="width:70px">MN2-Khu vực 1</td><td id="oIn{" class="" style="width:145px">470,723,330,654.85</td><td id="yYvG" class="" style="width:136px">15,022,603,295.73</td><td id="Q[^d" class="" style="width:60px">3.19</td><td id="k{l^" class="" style="width:61px">14</td><td id="A\P&gt;" class="" style="width:63px">14</td><td id="C:BB" class="" style="width:60px">25</td></tr><tr id="1b3caabb-4910-800a-9fb0-eee8052c29bf"><td id="&gt;Zk}" class="" style="width:70px">Modern Trade</td><td id="eEPY" class="" style="width:70px">MT-Khu vực 1</td><td id="oIn{" class="" style="width:145px">154,300,056,642.90</td><td id="yYvG" class="" style="width:136px">4,734,246,400.15</td><td id="Q[^d" class="" style="width:60px">3.07</td><td id="k{l^" class="" style="width:61px">26</td><td id="A\P&gt;" class="" style="width:63px">27</td><td id="C:BB" class="" style="width:60px">26</td></tr><tr id="1b3caabb-4910-8096-8966-d6b3b8002872"><td id="&gt;Zk}" class="" style="width:70px">General Trade</td><td id="eEPY" class="" style="width:70px">MT-Khu vực 2</td><td id="oIn{" class="" style="width:145px">529,181,581,936.35</td><td id="yYvG" class="" style="width:136px">14,641,838,748.20</td><td id="Q[^d" class="" style="width:60px">2.77</td><td id="k{l^" class="" style="width:61px">10</td><td id="A\P&gt;" class="" style="width:63px">18</td><td id="C:BB" class="" style="width:60px">27</td></tr><tr id="1b3caabb-4910-802b-8da3-c56218623ade"><td id="&gt;Zk}" class="" style="width:70px">General Trade</td><td id="eEPY" class="" style="width:70px">MT-Khu vực 3</td><td id="oIn{" class="" style="width:145px">501,303,398,720.95</td><td id="yYvG" class="" style="width:136px">12,678,905,910.30</td><td id="Q[^d" class="" style="width:60px">2.53</td><td id="k{l^" class="" style="width:61px">12</td><td id="A\P&gt;" class="" style="width:63px">19</td><td id="C:BB" class="" style="width:60px">28</td></tr><tr id="1b3caabb-4910-8074-b0d4-cf00f9f6d887"><td id="&gt;Zk}" class="" style="width:70px">Modern Trade</td><td id="eEPY" class="" style="width:70px">MT-Khu vực 3</td><td id="oIn{" class="" style="width:145px">148,284,822,633.85</td><td id="yYvG" class="" style="width:136px">3,297,184,859.72</td><td id="Q[^d" class="" style="width:60px">2.22</td><td id="k{l^" class="" style="width:61px">29</td><td id="A\P&gt;" class="" style="width:63px">32</td><td id="C:BB" class="" style="width:60px">29</td></tr><tr id="1b3caabb-4910-8072-a800-f5b93731921f"><td id="&gt;Zk}" class="" style="width:70px">General Trade</td><td id="eEPY" class="" style="width:70px">MN2-Khu vực 3</td><td id="oIn{" class="" style="width:145px">396,586,603,458.85</td><td id="yYvG" class="" style="width:136px">6,752,399,001.91</td><td id="Q[^d" class="" style="width:60px">1.70</td><td id="k{l^" class="" style="width:61px">18</td><td id="A\P&gt;" class="" style="width:63px">24</td><td id="C:BB" class="" style="width:60px">30</td></tr></tbody></table><ul id="1b3caabb-4910-807a-8c36-d095430685c8" class="bulleted-list"><li style="list-style-type:disc"><strong>General Trade</strong><ul id="1b3caabb-4910-8082-bdae-fcd275476e44" class="bulleted-list"><li style="list-style-type:circle"><strong>Khu vực TP.HCM (MN1) là khu vực hiệu quả nhất</strong>, dẫn đầu cả về doanh thu (<strong>1,93 nghìn tỷ VND</strong>), lợi nhuận ròng (<strong>284,4 tỷ VND</strong>) và biên lợi nhuận (<strong>14,74%</strong>).</li></ul><ul id="1b3caabb-4910-8027-b0e8-d650cda446f3" class="bulleted-list"><li style="list-style-type:circle">Hà Nội (MB1) xếp thứ hai về doanh thu và lợi nhuận, nhưng biên lợi nhuận thấp hơn TP.HCM.</li></ul></li></ul><ul id="1b3caabb-4910-800b-bfea-f87add269c87" class="bulleted-list"><li style="list-style-type:disc"><strong>Modern Trade</strong><ul id="1b3caabb-4910-80ee-9bd0-f143b3303978" class="bulleted-list"><li style="list-style-type:circle"><strong>TP.HCM (MN1) cũng là khu vực có kết quả tốt nhất</strong>, với doanh thu (<strong>801,4 tỷ VND</strong>), lợi nhuận ròng (<strong>114,7 tỷ VND</strong>) và biên lợi nhuận (<strong>14,31%</strong>), đứng đầu trong kênh này.</li></ul><ul id="1b3caabb-4910-80bd-b39d-c18e4efc5434" class="bulleted-list"><li style="list-style-type:circle">Hà Nội (MB1) có doanh thu và lợi nhuận cao nhưng biên lợi nhuận thấp hơn (<strong>13,61%</strong>).</li></ul></li></ul><p id="1b3caabb-4910-8097-b211-d1552ddc71e8" class="">Tóm lại, khu vực TP.HCM (MN1) là khu vực hoạt động tốt nhất ở cả hai kênh phân phối, với General Trade có hiệu suất lợi nhuận cao hơn so với Modern Trade.</p><h3 id="1afcaabb-4910-8075-905e-c86a961190fe" class=""><strong>2. Xu hướng tăng trưởng doanh số của từng khu vực theo thời gian như thế nào? </strong></h3><p id="1b3caabb-4910-809a-8e98-f095b9fce4d5" class="">Doanh Thu và Tăng Trưởng Theo Vùng Bán Hàng</p><table id="1b3caabb-4910-80d6-a1ee-c01ca65c8ac5" class="simple-table"><tbody><tr id="1b3caabb-4910-804e-b676-eaab88d5b20d"><td id="A`^J" class="block-color-gray_background">Tên Vùng Bán Hàng</td><td id="~axz" class="block-color-gray_background">Doanh Thu Quý Đầu</td><td id="|ll`" class="block-color-gray_background">Doanh Thu Quý Mới Nhất</td><td id=":V]{" class="block-color-gray_background">Tăng Trưởng Tuyệt Đối</td><td id="Im_r" class="block-color-gray_background">Tăng Trưởng Tỷ Lệ (%)</td><td id="jnOs" class="block-color-gray_background">Xu Hướng</td></tr><tr id="1b3caabb-4910-805d-9026-ca341e8f77ba"><td id="A`^J" class="">MT-Khu vực 3</td><td id="~axz" class="">61,850,476,359</td><td id="|ll`" class="">73,928,748,216.75</td><td id=":V]{" class="">12,078,271,857.75</td><td id="Im_r" class="">19.53%</td><td id="jnOs" class="">Tăng</td></tr><tr id="1b3caabb-4910-80a0-b415-ed50828f73c8"><td id="A`^J" class="">MT-Khu vực 4</td><td id="~axz" class="">68,910,538,627</td><td id="|ll`" class="">78,934,023,759.5</td><td id=":V]{" class="">10,023,485,132.5</td><td id="Im_r" class="">14.55%</td><td id="jnOs" class="">Tăng</td></tr><tr id="1b3caabb-4910-8027-805f-d305e0d7025d"><td id="A`^J" class="">MB1-Hà Nội</td><td id="~axz" class="">189,876,498,049</td><td id="|ll`" class="">204,770,440,463.75</td><td id=":V]{" class="">14,893,942,414.75</td><td id="Im_r" class="">7.84%</td><td id="jnOs" class="">Tăng</td></tr><tr id="1b3caabb-4910-80d7-881e-c926f87caeec"><td id="A`^J" class="">Kênh.MT1</td><td id="~axz" class="">102,703,841,912</td><td id="|ll`" class="">108,180,077,028.45</td><td id=":V]{" class="">5,476,235,116.45</td><td id="Im_r" class="">5.33%</td><td id="jnOs" class="">Tăng</td></tr><tr id="1b3caabb-4910-80b2-a648-fdb519c365cd"><td id="A`^J" class="">MB1-Khu vực 1</td><td id="~axz" class="">60,683,045,640</td><td id="|ll`" class="">62,199,785,037.25</td><td id=":V]{" class="">1,516,739,397.25</td><td id="Im_r" class="">2.50%</td><td id="jnOs" class="">Tăng</td></tr><tr id="1b3caabb-4910-80d7-bc0f-c330ecae048d"><td id="A`^J" class="">MT-Khu vực 1</td><td id="~axz" class="">58,243,816,687</td><td id="|ll`" class="">59,627,332,513.35</td><td id=":V]{" class="">1,383,515,826.35</td><td id="Im_r" class="">2.38%</td><td id="jnOs" class="">Tăng</td></tr><tr id="1b3caabb-4910-80d6-9fbc-eaecbb0cc73b"><td id="A`^J" class="">MN2-Khu vực 2</td><td id="~axz" class="">64,656,739,714</td><td id="|ll`" class="">65,571,023,982.1</td><td id=":V]{" class="">914,284,268.1</td><td id="Im_r" class="">1.41%</td><td id="jnOs" class="">Tăng</td></tr><tr id="1b3caabb-4910-803e-b29f-d54ba756744b"><td id="A`^J" class="">MB2-Khu vực 1</td><td id="~axz" class="">68,220,483,569</td><td id="|ll`" class="">68,655,191,462.55</td><td id=":V]{" class="">434,707,893.55</td><td id="Im_r" class="">0.64%</td><td id="jnOs" class="">Tăng</td></tr><tr id="1b3caabb-4910-80e5-a605-ddf6e91af1ba"><td id="A`^J" class="">Kênh.MT2</td><td id="~axz" class="">16,163,951,622</td><td id="|ll`" class="">16,211,685,883.05</td><td id=":V]{" class="">47,734,261.05</td><td id="Im_r" class="">0.30%</td><td id="jnOs" class="">Tăng</td></tr><tr id="1b3caabb-4910-803a-8797-feafd37996b7"><td id="A`^J" class="">MN2-Khu vực 4</td><td id="~axz" class="">70,653,636,284</td><td id="|ll`" class="">70,744,637,601.05</td><td id=":V]{" class="">91,001,317.05</td><td id="Im_r" class="">0.13%</td><td id="jnOs" class="">Tăng</td></tr><tr id="1b3caabb-4910-80b2-b410-d6cea8435fa0"><td id="A`^J" class="">MN2-Khu vực 1</td><td id="~axz" class="">64,654,049,362</td><td id="|ll`" class="">64,653,079,780.45</td><td id=":V]{" class="">-969,581.55</td><td id="Im_r" class="">-0.0015%</td><td id="jnOs" class="">Giảm</td></tr><tr id="1b3caabb-4910-80f8-949a-e764d0b51b21"><td id="A`^J" class="">MT-Khu vực 2</td><td id="~axz" class="">80,083,614,534</td><td id="|ll`" class="">79,779,582,691.2</td><td id=":V]{" class="">-304,031,842.8</td><td id="Im_r" class="">-0.38%</td><td id="jnOs" class="">Giảm</td></tr><tr id="1b3caabb-4910-80a0-9c7d-e4c103f94a04"><td id="A`^J" class="">MB2-Khu vực 2</td><td id="~axz" class="">94,185,924,595</td><td id="|ll`" class="">93,772,699,787.2</td><td id=":V]{" class="">-413,224,807.8</td><td id="Im_r" class="">-0.44%</td><td id="jnOs" class="">Giảm</td></tr><tr id="1b3caabb-4910-8003-bacb-fb10eaba21a6"><td id="A`^J" class="">MN1-Khu vực 1</td><td id="~axz" class="">92,781,174,955</td><td id="|ll`" class="">92,167,816,367.55</td><td id=":V]{" class="">-613,358,587.45</td><td id="Im_r" class="">-0.66%</td><td id="jnOs" class="">Giảm</td></tr><tr id="1b3caabb-4910-8003-9a05-ce86c5186681"><td id="A`^J" class="">MN2-Khu vực 3</td><td id="~axz" class="">64,646,273,937</td><td id="|ll`" class="">62,898,595,823.35</td><td id=":V]{" class="">-1,747,678,113.65</td><td id="Im_r" class="">-2.70%</td><td id="jnOs" class="">Giảm</td></tr><tr id="1b3caabb-4910-8020-90fe-f328f2eacf5f"><td id="A`^J" class="">MN1-Khu vực 3</td><td id="~axz" class="">53,359,774,755</td><td id="|ll`" class="">51,874,084,268.3</td><td id=":V]{" class="">-1,485,690,486.7</td><td id="Im_r" class="">-2.78%</td><td id="jnOs" class="">Giảm</td></tr><tr id="1b3caabb-4910-80df-9305-cf3c6d9d9e71"><td id="A`^J" class="">MB1-Khu vực 2</td><td id="~axz" class="">93,151,308,792</td><td id="|ll`" class="">89,985,020,711.75</td><td id=":V]{" class="">-3,166,288,080.25</td><td id="Im_r" class="">-3.40%</td><td id="jnOs" class="">Giảm</td></tr><tr id="1b3caabb-4910-8038-b17c-de91393acf27"><td id="A`^J" class="">MN1-Khu vực TP.HCM</td><td id="~axz" class="">308,904,032,983</td><td id="|ll`" class="">298,231,147,413.15</td><td id=":V]{" class="">-10,672,885,569.85</td><td id="Im_r" class="">-3.46%</td><td id="jnOs" class="">Giảm</td></tr><tr id="1b3caabb-4910-8087-b85e-f50f3c6d8f62"><td id="A`^J" class="">MN1-Khu vực 2</td><td id="~axz" class="">64,713,974,360</td><td id="|ll`" class="">60,046,623,055.25</td><td id=":V]{" class="">-4,667,351,304.75</td><td id="Im_r" class="">-7.21%</td><td id="jnOs" class="">Giảm</td></tr></tbody></table><ul id="1b3caabb-4910-802b-bed6-cd499fdcbda6" class="bulleted-list"><li style="list-style-type:disc"><strong>Các khu vực có tăng trưởng doanh thu</strong><ul id="1b3caabb-4910-8049-9856-d0703f38a447" class="bulleted-list"><li style="list-style-type:circle"><strong>MT-Khu vực 3</strong> có mức tăng trưởng cao nhất (<strong>+19,53%</strong>), tiếp theo là <strong>MT-Khu vực 4</strong> (<strong>+14,55%</strong>), cho thấy sự mở rộng tích cực.</li></ul><ul id="1b3caabb-4910-801b-a01b-f8fac58609c7" class="bulleted-list"><li style="list-style-type:circle"><strong>MB1-Hà Nội</strong> cũng ghi nhận mức tăng đáng kể (<strong>+7,84%</strong>), phản ánh nhu cầu ổn định.</li></ul><ul id="1b3caabb-4910-80e9-9022-dbdb2bea867b" class="bulleted-list"><li style="list-style-type:circle">Một số khu vực khác có mức tăng thấp hơn, từ <strong>+0,13% đến +5,33%</strong>, cho thấy sự tăng trưởng nhưng không đồng đều.</li></ul></li></ul><ul id="1b3caabb-4910-8013-b11d-e4e3e1b5a011" class="bulleted-list"><li style="list-style-type:disc"><strong>Các khu vực có doanh thu giảm</strong><ul id="1b3caabb-4910-8075-8651-f2121fe6b8ed" class="bulleted-list"><li style="list-style-type:circle"><strong>MN2-Khu vực 1</strong>, <strong>MT-Khu vực 2</strong>, <strong>MB2-Khu vực 2</strong>, <strong>MN1-Khu vực 1</strong> có mức giảm nhẹ (<strong>dưới -1%</strong>), có thể do biến động ngắn hạn.</li></ul><ul id="1b3caabb-4910-8040-a113-cee6890c3eb1" class="bulleted-list"><li style="list-style-type:circle">Tuy nhiên, <strong>MN2-Khu vực 3</strong> (<strong>2,70%</strong>), <strong>MN1-Khu vực 3</strong> (<strong>2,78%</strong>), <strong>MB1-Khu vực 2</strong> (<strong>3,40%</strong>), <strong>MN1-Khu vực TP.HCM</strong> (<strong>3,46%</strong>) và <strong>MN1-Khu vực 2</strong> (<strong>7,21%</strong>) có sự sụt giảm đáng kể, cho thấy dấu hiệu suy giảm nhu cầu hoặc thay đổi trong thị trường.</li></ul></li></ul><p id="1b4caabb-4910-8071-ae5a-e2e857bd2bb1" class=""><strong>Ghi chú:</strong></p><blockquote id="1b4caabb-4910-8061-b1a3-f36d26a56730" class="">Tăng trưởng tuyệt đối = Doanh thu quý mới nhất - Doanh thu quý đầu</blockquote><blockquote id="1b4caabb-4910-80e2-bce1-d07976d0d960" class="">Tăng trưởng tỷ lệ (%) = ((Doanh thu quý mới nhất - Doanh thu quý đầu) / Doanh thu quý đầu) × 100</blockquote><hr id="1afcaabb-4910-80e1-a5ce-c997bdc0566c"/></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
